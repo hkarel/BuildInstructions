@@ -1,0 +1,46 @@
+From 0bb5775136ccb3dcfa77fc38412ca4463a5a38b7 Mon Sep 17 00:00:00 2001
+From: Karelin Pavel <hkarel@yandex.ru>
+Date: Sat, 30 Aug 2014 14:03:45 +0400
+Subject: [PATCH] Reset selection of files when the option "Left mouse button
+ selects" is unchecked.
+
+Signed-off-by: Karelin Pavel <hkarel@yandex.ru>
+---
+ CMakeLists.txt                    | 2 +-
+ krusader/Panel/krmousehandler.cpp | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 205a4b97..06fd70b4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,7 +3,7 @@ project(krusader)
+ 
+ INCLUDE(CPack)
+ 
+-set(VERSION "2.4.0-beta3" )
++set(VERSION "2.4.0-beta4" )
+ set(RELEASE_NAME "Single Step")
+ 
+ find_package(KDE4 REQUIRED)
+diff --git a/krusader/Panel/krmousehandler.cpp b/krusader/Panel/krmousehandler.cpp
+index 18947dbf..6033745c 100644
+--- a/krusader/Panel/krmousehandler.cpp
++++ b/krusader/Panel/krmousehandler.cpp
+@@ -156,7 +156,12 @@ bool KrMouseHandler::mouseReleaseEvent(QMouseEvent *e)
+             item->setSelected(true);
+         }
+     }
+-
++    if ((e->button() == Qt::LeftButton) && (e->modifiers() == Qt::NoModifier) &&
++        !KrSelectionMode::getSelectionHandler()->leftButtonSelects() &&
++        KrSelectionMode::getSelectionHandler()->shiftCtrlLeftButtonSelects()) {
++        // clear the current selection
++        _view->changeSelection(KRQuery("*"), false, true);
++    }
+     if (e->button() == Qt::RightButton) {
+         _rightClickedItem = 0;
+         _contextMenuTimer.stop();
+-- 
+2.11.0
+

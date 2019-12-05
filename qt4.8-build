@@ -1,0 +1,116 @@
+Конфигурирование отладочной сборки Qt 4.8
+
+Установить:
+    sudo apt-get install libxtst-dev libxrender-dev libicu-dev libdbus-1-dev libssl-dev zlib1g-dev
+
+Скачиваем исходный код:
+    apt-get source qt4-default
+
+    или с официального файта Qt-ов
+    wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/qt-everywhere-opensource-src-4.8.6.tar.gz
+
+Переходим в директорию с исходным кодом:
+    mv qt4-x11-4.8.4+dfsg qt4-x11-4.8.4
+    cd qt4-x11-4.8.4
+
+    или
+    tar -xf qt-everywhere-opensource-src-4.8.6.tar.gz && \
+    cd qt-everywhere-opensource-src-4.8.6 \
+
+Конфигурируем:
+    ./configure \
+        -verbose -prefix /usr/local/qt/4.8.6-debug \
+        -debug -opensource --enable-confirm-license \
+        -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
+        -optimized-qmake \
+        -no-qt3support -no-webkit -no-nis -no-cups \
+        -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+        -dbus-linked -openssl-linked \
+
+        -separate-debug-info \
+
+
+    ./configure
+        -verbose -prefix /home/hkarel/Tools/qt4-x11-4.8.6 \
+        -debug -opensource --enable-confirm-license \
+        -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
+        -optimized-qmake \
+        -no-qt3support -no-webkit -no-nis -no-cups \
+        -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+        -dbus-linked -openssl-linked \
+
+
+    Конфигурация под Centos 6 (без графики):
+    ./configure \
+        -verbose -prefix /usr/local/qt/4.8.6-base \
+        -release -opensource --enable-confirm-license \
+        -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
+        -optimized-qmake \
+        -no-stl -no-qt3support -no-webkit -no-nis -no-cups -no-multimedia \
+        -no-audio-backend -no-phonon -no-phonon-backend \
+        -no-svg -no-gif -no-libtiff -no-libpng -no-libmng -no-libjpeg \
+        -no-dbus -no-iconv -no-openssl \
+        -no-opengl -no-openvg -no-xvideo \
+        -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-odbc -no-sql-psql -no-sql-sqlite_symbian -no-sql-symsql -no-sql-tds \
+        -no-declarative -no-declarative-debug \
+        -no-gui \
+        -no-gtkstyle -no-sm -no-xshape -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm \
+        -no-fontconfig -no-xinput -no-xkb -no-glib \
+
+        
+    // ??? Для сборки Qt со соторонним компилятором; так же нужно
+    // ??? изменить QMAKE_CXX и QMAKE_CC в mkspecs/common/g++-base.conf
+    CXX=/usr/local/gcc/4.8.3/bin/g++; \
+    CC=/usr/local/gcc/4.8.3/bin/gcc; \
+    QMAKE_CXX=/usr/local/gcc/4.8.3/bin/g++; \
+    QMAKE_CC=/usr/local/gcc/4.8.3/bin/gcc; \
+
+
+    Сборка qbs с gcc-4.8.3:
+    /usr/local/qt/4.8.6-base/bin/qmake -r \
+        QMAKE_CC=/usr/local/gcc/4.8.3/bin/gcc \
+        QMAKE_LINK_C=/usr/local/gcc/4.8.3/bin/gcc \
+        QMAKE_CXX=/usr/local/gcc/4.8.3/bin/g++ \
+        QMAKE_LINK=/usr/local/gcc/4.8.3/bin/g++ \
+        CONFIG+=qbs_not_build_config_ui \
+
+    /usr/local/qt/4.8.6-base/bin/qmake -r \
+        CONFIG+=qbs_not_build_config_ui \
+
+
+Для переконфигурации:
+    make confclean
+    ./configure
+
+Если требуется QtDeclarative модуль, то выполняем перед началом сборки:
+    SOURCE="declarative"; \
+    DEST="QtDeclarative"; \
+    for f in $(find ./src/$SOURCE -type f -name '*_p.h'); do \
+        FL="./include/$DEST/private/$(basename $f)"; \
+        test ! -e $FL  && test ! -L $FL  && echo $FL && ln -s "../../..${f#.}" $FL; \
+    done; \
+
+Исключить Google WebKit:
+    qt4.8-build-rm-webkit ./
+
+Сборка:
+    make -j4
+
+Установка:
+    sudo make install
+
+Копирование исходного кода в директорию установки:
+    QT_DEBUG=qt486-debug; \
+    sudo mv /usr/local/$QT_DEBUG/include /usr/local/$QT_DEBUG/include-old; \
+    sudo cp -r ./include /usr/local/$QT_DEBUG/include; \
+    sudo find ./src/ -type f ! -name '*.o' -exec cp --parents -t /usr/local/$QT_DEBUG/ {} \; \
+
+    В .gdbinit добавить команду на подмену отладочных директорий
+    (материал по теме: https://sourceware.org/gdb/onlinedocs/gdb/Source-Path.html#set%20substitute-path)
+
+        set substitute-path /home/hkarel/Tools/qt4-x11-4.8.6/build/src/  /usr/local/qt486-debug/src/
+
+
+Удаление отладочной информации:
+    ls -1 /usr/local/qt486-debug/bin/* | xargs -i sudo strip --strip-all {}
+

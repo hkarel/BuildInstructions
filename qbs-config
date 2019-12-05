@@ -1,0 +1,40 @@
+Материал по теме:
+    http://doc-snapshot.qt-project.org/qbs/configuring.html
+
+Список профилей (при первом запуске пустой список):
+    qbs config --list profiles
+
+Список всех параметров:
+    qbs config --list
+
+Детектирование тулчейнов:
+    qbs setup-toolchains --detect  (или qbs.exe setup-toolchains --detect)
+    или
+
+    Если компилятор находится не в стандартной директори:
+        qbs setup-toolchains --type gcc /usr/local/gcc/4.8.3/bin/g++ gcc483
+
+        Для Windpws:
+        qbs setup-toolchains --type mingw c:\MinGW\4.8.2\bin\g++.exe mingw482
+
+Если профилей тулчейнов несколько (gcc, clang | MSVC2008_x86, MSVC2010_x86, mingw482),
+то нужно определиться с профилем по умолчанию:
+    qbs config defaultProfile gcc (или gcc483, или mingw482)
+
+Детектирование профилей qt:
+    qbs setup-qt --detect
+
+    или если qt 4.8 не детектируется:
+    qbs setup-qt /usr/lib/x86_64-linux-gnu/qt4/bin/qmake qt48
+
+    или (для Windows)
+    qbs-setup-qt.exe c:\Qt\4.8.6-mingw482\bin\qmake.exe qt48
+
+Для профилей qt нужно явно указать профиль тулчейна. Связываем профиль qt (qt48)
+с тулчейном gcc:
+    qbs config profiles.qt48.baseProfile gcc
+    или
+    qbs config profiles.qt48.baseProfile mingw48
+
+Для профилей qt нужно явно выставить свойство staticBuild в false.
+    qbs config profiles.qt48.Qt.core.staticBuild false

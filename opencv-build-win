@@ -1,0 +1,17 @@
+Источник:
+    http://stackoverflow.com/questions/26397657/compiling-mingw-libs-for-opencv-under-windows
+
+cd ~/opencv
+mkdir build && cd build
+
+cmake \
+    -G "MinGW Makefiles" \
+    -D CMAKE_BUILD_TYPE=Release \
+    -D CMAKE_INSTALL_PREFIX=c:/opt/opencv/3.1.0 \
+    -D CMAKE_MAKE_PROGRAMM=c:/opt/mingw/4.8.4/bin/mingw32-make.exe \
+    -D CMAKE_CXX_COMPILER=c:/opt/mingw/4.8.4/bin/i686-w64-mingw32-g++.exe  \
+    .. \
+
+cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=c:/opt/opencv/3.1.0 -DCMAKE_MAKE_PROGRAMM="c:/Program Files/CMake/bin/cmake.exe" -DCMAKE_C_COMPILER=c:/opt/mingw/4.8.4/bin/i686-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER=c:/opt/mingw/4.8.4/bin/i686-w64-mingw32-g++.exe -DCMAKE_SH="c:/Program Files/Git/bin/sh.exe" ..
+
+cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=c:/opt/opencv/3.2.0 -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_JPEG=OFF -DBUILD_opencv_highgui=OFF -DCMAKE_MAKE_PROGRAMM="c:/Program Files/CMake/bin/cmake.exe" -DCMAKE_C_COMPILER=c:/opt/mingw/4.8.4/bin/i686-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER=c:/opt/mingw/4.8.4/bin/i686-w64-mingw32-g++.exe -DCMAKE_SH="c:/Program Files/Git/bin/sh.exe" ..

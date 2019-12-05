@@ -1,0 +1,68 @@
+Материал по теме:
+    https://gcc.gnu.org/wiki/InstallingGCC
+
+Build error FAQ:
+    https://gcc.gnu.org/wiki/FAQ
+
+Заметки по статической линковке libstdc++
+    http://www.trilithium.com/johan/2005/06/static-libstdc/
+
+Источник:
+    ftp://ftp.gnu.org/gnu/gcc/
+    wget -c ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.3/gcc-4.8.3.tar.bz2
+
+Распаковка:
+    tar -xf gcc-4.8.3.tar.bz2 && cd gcc-4.8.3
+
+Установка доп-компонентов:
+    ./contrib/download_prerequisites && mkdir -p build && cd build
+
+Конфигурирование:
+    ../configure \
+        --prefix=/usr/local/gcc/4.8.3 \
+        --disable-multilib \
+        --enable-languages=c,c++
+
+
+        --enable-cxx-flags='-Wl,-rpath,/root'
+
+        --enable-version-specific-runtime-libs
+
+        LDFLAGS='-Wl,-rpath=\$$ORIGIN'
+
+        STRIP_FOR_TARGET=1 \
+
+        INSTALL_STRIP_PROGRAM
+
+/usr/local/lib64,-rpath=/usr/local/lib on the 'configure' command-line, but nothing worked.
+LDFLAGS_FOR_TARGET=-Wl,-rpath=/usr/local/lib64,-rpath=/usr/local/lib
+on the 'configure' command-line, but nothing worked.
+
+        LDFLAGS=-Wl,-rpath,./
+
+       LDFLAGS='-Wl,-z,origin -Wl,-rpath,\$$ORIGIN'
+
+        LDFLAGS=-Wl,-z,origin -Wl,-rpath,\$ORIGIN
+    или
+    ../configure \
+        --prefix=/usr/local/gcc/4.8.3 \
+        --disable-multilib \
+        --enable-languages=c,c++ \
+        --program-suffix=-4.8.3
+
+
+Сборка и установка
+    make -j4
+    sudo make install
+
+Удаление отладочной информации:
+    sudo find /usr/local/gcc/4.8.3/bin -type f -exec strip --strip-all {} \;
+    sudo find /usr/local/gcc/4.8.3/{lib,libexec,lib64} -type f -exec strip --strip-debug {} \;
+
+Создание символических ссылок:
+    sudo ln -sf /usr/local/gcc/4.8.3/bin/g++ /usr/bin/g++-4.8.3
+    sudo ln -sf /usr/local/gcc/4.8.3/bin/gcc /usr/bin/gcc-4.8.3
+
+Проверка путей до библиотек:
+    /usr/local/gcc/4.8.3/bin/g++ -print-file-name=libstdc++.a
+    g++-4.8.3 -print-file-name=libstdc++.a

@@ -1,0 +1,5 @@
+Страница загрузки:
+  https://developer.nvidia.com/cuda-10.0-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1404&target_type=deblocal
+
+Выбирать 14.04 "deb (local)"
+Далее по инструкции.

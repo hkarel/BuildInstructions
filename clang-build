@@ -1,0 +1,70 @@
+Имеется два варианта сборки clang:
+
+1) Сборки из trunk.
+Процесс описан тут: http://clang.llvm.org/get_started.html
+Единственно, на что нужно обратить внимание, что по умолчанию собирается
+дебажная сборка. Поэтому при крнфигурировании нужно выставить release-флаг,
+см. список параметров в llvm/configure --help.
+
+
+2) Сборка стабильной версии 3.3
+
+mkdir clang-src-3.3
+cd clang-src-3.3
+
+wget http://llvm.org/releases/3.3/cfe-3.3.src.tar.gz
+wget http://llvm.org/releases/3.3/llvm-3.3.src.tar.gz
+wget http://llvm.org/releases/3.3/compiler-rt-3.3.src.tar.gz
+wget http://llvm.org/releases/3.3/clang-tools-extra-3.3.src.tar.gz
+
+tar -xf llvm-3.3.src.tar.gz
+mv llvm-3.3.src llvm
+
+tar -xf cfe-3.3.src.tar.gz -C llvm/tools/
+mv llvm/tools/cfe-3.3.src/ llvm/tools/clang
+
+tar -xf clang-tools-extra-3.3.src.tar.gz -C llvm/tools/clang/tools/
+mv llvm/tools/clang/tools/clang-tools-extra-3.3.src/ llvm/tools/clang/tools/extra
+
+tar -xf compiler-rt-3.3.src.tar.gz -C llvm/projects/
+mv llvm/projects/compiler-rt-3.3.src/ llvm/projects/compiler-rt
+
+
+Для CentOS 5:
+    wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+    sudo rpm -ivh epel-release-5-4.noarch.rpm
+    yum install python26
+
+    yum install gcc44
+    yum install gcc44-c++
+
+
+mkdir build
+cd build
+
+
+Примечание: список параметров компиляции ../llvm/configure --help
+
+Для CentOS 5:
+    CC=gcc44 CXX=g++44 ../llvm/configure --enable-optimized --with-python=/usr/bin/python26 --with-c-include-dirs=/usr/include/c++/4.4.7
+
+Для Ubuntu
+    ../llvm/configure --enable-optimized
+
+make
+make install
+
+
+3) Для Ubuntu 13.04 можно скачать готовую сборку в оф. сайта
+    https://llvm.org/viewvc/llvm-project/www-releases/trunk
+    (clang+llvm-3.3-Ubuntu-13.04-x86_64-linux-gnu.tar.bz2)
+        - распаковать архив в директорию: /usr/local/clang-3.3
+        - в /etc/environment добавить путь: /usr/local/clang-3.3/bin
+          или так:
+          sudo su root -c "echo 'export PATH=\$PATH:/usr/local/clang/3.4/bin' > /etc/profile.d/clang.sh"
+        - перегрузиться
+
+    Дополнительно можно прописать симлинки:
+        sudo ln -sf /usr/local/clang/3.4/bin/clang /usr/bin/clang
+        sudo ln -sf /usr/local/clang/3.4/bin/clang /usr/bin/clang++
+

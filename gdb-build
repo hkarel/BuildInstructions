@@ -1,0 +1,40 @@
+Сборка GDB с поддержкой python v3 для работы в Qt Creator 3.x
+
+Материал по теме:
+    http://hostilefork.com/2013/10/20/qtcreator-debugger-no-locals-ubuntu/
+
+Источник:
+    http://ftp.gnu.org/gnu/gdb/
+    Берем последнюю версию (на момент написания: gdb-8.3.1.tar.xz)
+
+Дополнительно установить:
+    sudo apt-get install \
+        libtinfo-dev \
+        libexpat1-dev \
+        python3-dev \
+        libncurses5-dev \
+        texinfo \
+
+Конфигурирование:
+    ./configure --prefix=/opt/gdb/8.3.1  --with-python=python3
+
+Сборка:
+    make -j4
+
+Проверка версии python:
+    ./gdb/gdb
+    (gdb) python print(sys.version)
+
+Установка:
+    sudo make install
+
+Удаление отладочной информации:
+    sudo find /opt/gdb/8.3.1/{bin,lib} \( -name 'gdb' -o -name 'gdbserver' -o -name 'lib*.a' -o -name 'lib*.so' \) -execdir strip --strip-debug {} \;
+
+
+Последние компиляторы gcc используют новый подход к размещению отладочной информации,
+gdb-7.6.1 поддерживает этот формат. Для того чтобы в QtCreator видеть более подробные
+отладочные данные нужно следующее: Инструменты -> Параметры -> Отладчик ->
+GDB, расширенные -> Использовать стандартное размещение отладочной информации: отключить.
+Обратной стороной будет более медленный старт приложения в отладочном режиме.
+

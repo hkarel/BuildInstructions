@@ -1,0 +1,36 @@
+Источник:
+    http://www.krusader.org/get-involved/
+
+Git репозиторий:
+    git clone git://anongit.kde.org/krusader && cd krusader
+
+Патч на сброс выделения по клику мыши:
+    Krusader_Reset-selection-of-files.patch
+
+Дополнительно установить:
+    sudo apt-get install cmake g++ libkonq5-dev zlib1g-dev libattr1-dev libacl1-dev
+
+Если сборка существующего git репозитория, то предварительно его чистим:
+    git reset --hard
+    git clean -dfx
+
+Конфигурирование:
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/ -DENABLE_SYNCHRONIZER=true
+
+Сборка:
+    make -j4
+
+Удаление отладочной информации:
+    strip --strip-debug krusader/krusader
+
+Установка:
+    sudo make install
+
+    если krusader был уже установлен ранее - можно просто скопировать файл
+    sudo cp -f krusader/krusader /usr/bin
+
+Локализация:
+    wget http://websvn.kde.org/*checkout*/trunk/l10n-kde4/xx/messages/extragear-utils/krusader.po
+    msgfmt krusader.po -o krusader.mo
+    sudo cp -f krusader.mo /usr/share/locale/de/LC_MESSAGES/
+

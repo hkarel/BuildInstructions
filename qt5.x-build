@@ -1,0 +1,170 @@
+ПРИМЕЧАНИЕ: Инструкция по сборке Qt 5.5.1 не завершена. Пока отказались
+            от самостоятельной сборки и используем собранный вариант
+            qt-opensource-linux-x64-5.5.1.run
+            Источник: http://master.qt.io/archive/qt/5.5/5.5.1/qt-opensource-linux-x64-5.5.1.run
+
+
+Источник (https://github.com/qtproject/qt5):
+    git clone  https://github.com/qtproject/qt5.git
+    git submodule update --init --recursive
+
+Для сборки компилятором отличным от системного нужно модифицировать файл
+mkspecs/common/g++-base.conf следующим образом:
+--- a/mkspecs/common/g++-base.conf
++++ b/mkspecs/common/g++-base.conf
+@@ -8,14 +8,14 @@
+ # you can use the manual test in tests/manual/mkspecs.
+ #
+
+-QMAKE_COMPILER          = gcc
++QMAKE_COMPILER          = /opt/gcc/4.9.3/bin/gcc
+
+-QMAKE_CC                = gcc
++QMAKE_CC                = /opt/gcc/4.9.3/bin/gcc
+
+ QMAKE_LINK_C            = $$QMAKE_CC
+ QMAKE_LINK_C_SHLIB      = $$QMAKE_CC
+
+-QMAKE_CXX               = g++
++QMAKE_CXX               = /opt/gcc/4.9.3/bin/g++
+
+ QMAKE_LINK              = $$QMAKE_CXX
+ QMAKE_LINK_SHLIB        = $$QMAKE_CXX
+@@ -27,6 +27,8 @@ QMAKE_CFLAGS_USE_PRECOMPILE   = -include ${QMAKE_PCH_OUTPUT_BASE}
+ QMAKE_CXXFLAGS_PRECOMPILE     = -x c++-header -c ${QMAKE_PCH_INPUT} -o ${QMAKE_PCH_OUTPUT}
+ QMAKE_CXXFLAGS_USE_PRECOMPILE = $$QMAKE_CFLAGS_USE_PRECOMPILE
+
++QMAKE_LFLAGS = -Wl,-z,origin -Wl,-rpath,/opt/gcc/4.9.3/lib64
++
+ QMAKE_CXXFLAGS_CXX11    = -std=c++11
+ QMAKE_CXXFLAGS_CXX14    = -std=c++1y
+ QMAKE_CXXFLAGS_CXX1Z    = -std=c++1z
+
+---
+
+
+Установить:
+    sudo apt-get install \
+        zlib1g-dev \
+        libglib2.0-dev \
+        libicu-dev \
+        libudev-dev \
+        libpng12-dev \
+        libfreetype6-dev \
+        libfontconfig1-dev \
+        libopenvg1-mesa-dev \
+        libgles2-mesa-dev \
+        libpulse-dev \
+        libasound2-dev \
+        libgbm-dev \
+     ???   libgstreamer1.0-dev \
+     ???   libgstreamer-plugins-base1.0-dev \
+        libasound2-dev \
+        libxkbcommon-dev \
+
+     ???   libgstreamer0.10-dev \
+     ???   libgstreamer-plugins-base0.10-dev \
+
+
+        // ?? libpulse-dev \
+
+
+    Для сборки qtwebengine:
+    sudo apt-get install \
+        libxcursor-dev \
+        libxcomposite-dev \
+        libxrandr-dev \
+        libpci-dev \
+        libnss3-dev \
+        gperf \
+
+
+        ???
+        libxcb-icccm4-dev \
+        libxcb-image0-dev \
+
+
+Очистка:
+    git clean -dfx \
+    && git submodule foreach --recursive git clean -dfx \
+    && git submodule update --init --recursive \
+    && git submodule update --recursive \
+
+
+Конфигурируем:
+    ./configure \
+        -verbose \
+        -prefix /opt/qt/5.5.1 \
+        -release \
+        -opensource --enable-confirm-license \
+        -qt-libjpeg \
+        -qt-xcb \
+        -qt-pcre \
+        -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-odbc -no-sql-psql -no-sql-tds \
+        -no-cups \
+        -no-mtdev \
+        -no-compile-examples \
+        -skip qtfeedback \
+        -skip qtpim \
+        -skip qtwebkit-examples \
+        -nomake examples \
+        -nomake tests \
+
+
+        -skip qtwebengine \
+        -skip qtwebchannel \
+        -skip qtwebkit \
+
+        //-no-sql-sqlite -no-sql-sqlite2 \
+        -no-eglfs \
+        -no-pch \
+
+
+
+Совсем короткий вариант (для сборки QBS):
+        -no-mtdev \
+        -no-gif -no-libpng -no-libjpeg \
+        -no-harfbuzz \
+        -no-xinput2 \
+        -no-pulseaudio \
+        -no-alsa \
+        -no-gtkstyle \
+        -no-compile-examples \
+        -no-gui \
+        -no-widgets \
+        -no-nis \
+        -no-cups \
+        -no-fontconfig \
+        -no-opengl \
+        -no-dbus \
+        -no-eglfs \
+        -no-kms \
+        -no-xcb
+
+
+        -skip qtwebkit-examples \
+
+        -skip qtwebkit  \
+        -qt-xcb
+
+        -nomake tools
+        -qt-zlib -qt-pcre
+        -no-cups -no-qt3support -no-webkit -no-nis  \
+        -qt-libpng -qt-libjpeg -qt-libtiff -qt-libmng  \
+        -dbus-linked -openssl-linked \
+
+
+
+-qt-freetype - ???
+
+
+Сборка:
+    CC=/opt/gcc/4.9.3/bin/gcc \
+    QMAKE_CXX=/opt/gcc/4.9.3/bin/g++ \
+    make -j4 \
+
+    Еще раз запустить make, чтобы убедиться, что нет не собранных проектов.
+
+Установка:
+    sudo make install
+

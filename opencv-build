@@ -1,0 +1,67 @@
+[Источник]
+http://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html
+
+[compiler]
+sudo apt-get install build-essential
+
+[required]
+sudo apt-get install cmake git libgtk2.0-dev pkg-config
+
+[optional]
+sudo apt-get install libjpeg-dev libpng-dev libtiff-dev libjasper-dev
+
+[Для работы с WEB-камерой используем libv4l-dev вместо libdc1394-22-dev]
+sudo apt-get install libv4l-dev
+
+[Для сборки с системной библиотекой FFMPEG]
+sudo apt-get install \
+  libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
+
+[Для сборки с собранной библиотекой FFMPEG]
+FFMPEG_VERSION=4.2; \
+export PKG_CONFIG_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib/pkgconfig; \
+export LD_LIBRARY_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}; \
+echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"; \
+echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" \
+
+cd ~/opencv
+git clean -dfx
+mkdir -p build && cd build
+
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/opencv/3.4.8 \
+  -D CMAKE_INSTALL_LIBDIR=lib \
+  -D BUILD_EXAMPLES=OFF \
+  -D BUILD_TESTS=OFF \
+  -D BUILD_PERF_TESTS=OFF \
+  -D BUILD_opencv_highgui=OFF \
+  -D WITH_IPP=OFF \
+  -D WITH_1394=OFF \
+  -D WITH_JPEG=ON \
+  -D WITH_FFMPEG=ON \
+  -D WITH_V4L=ON \
+  -D WITH_GTK=OFF \
+  -D WITH_GTK_2_X=OFF \
+  -D BUILD_opencv_python2=OFF \
+  -D BUILD_opencv_python3=OFF \
+  -D BUILD_opencv_js=OFF \
+  -D BUILD_ANDROID_PROJECTS=OFF \
+  -D BUILD_ANDROID_EXAMPLES=OFF \
+  -D BUILD_ANDROID_SERVICE=OFF \
+  -D BUILD_FAT_JAVA_LIB=OFF \
+  -D BUILD_JAVA=OFF \
+  .. \
+
+Для сборки под ARM NEON добавить
+  -D ENABLE_VFPV3=ON \
+  -D ENABLE_NEON=ON \
+
+  Параметры компилятора
+    -mfpu=neon -mfp16-format=ieee
+
+
+Процессор Intel i5 2500K SandyBridge не поддерживает OpenCL
+  -D WITH_VA_INTEL=ON \
+  -D VA_INTEL_MSDK_ROOT=/opt/intel/mediasdk/7.0.16073669 \
+

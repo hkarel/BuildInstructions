@@ -1,0 +1,21 @@
+[Источник]
+git clone https://github.com/FFmpeg/FFmpeg.git
+
+[required]
+sudo apt-get install yasm -y --allow-unauthenticated
+sudo apt-get install libv4l-dev
+
+[required ? проверить нужны ли]
+sudo apt-get install libx264-148 libx264-dev libx265-165 libx265-dev
+
+cd ~/FFmpeg
+git clean -dfx
+
+./configure \
+  --prefix=/opt/ffmpeg/4.2 \
+  --disable-static \
+  --disable-doc \
+  --enable-shared \
+  --enable-rpath \
+  --enable-pic \
+  --extra-ldexeflags=-pie \

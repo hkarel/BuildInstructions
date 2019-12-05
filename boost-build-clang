@@ -1,0 +1,18 @@
+
+wget http://downloads.sourceforge.net/project/boost/boost/1.49.0/boost_1_49_0.tar.bz2
+
+tar -jxf boost_1_49_0.tar.bz2
+cd ./boost_1_49_0/
+echo "Hello" > libs/regex/build/has_icu_test.cpp
+
+# Можно перестраховаться: создать файл ~/user-config.jam и записать в него строку
+#
+#    using clang ;
+
+
+./bootstrap.sh --without-icu
+./b2 toolset=clang
+
+
+# Возврвщвем версию clang
+# clang --version | awk '{print $3; exit}'

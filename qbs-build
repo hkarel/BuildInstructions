@@ -1,0 +1,149 @@
+Материал по теме:
+    http://habrahabr.ru/post/144127/
+
+Исходники:
+    git clone git://gitorious.org/qt-labs/qbs.git
+
+Git-hash на момент сборки совместимый с qtcreator
+    qbs: c14e9d3d56a5fe5820077fde28289e6f2f484026 -> qtcreator: a4cb022fa3ea4576641976309f20a26af732d591
+
+Сборка (читать ./qbs/README):
+    cd ./qbs
+    qmake -r (для Ubuntu/Kubuntu 13.10 использовать: qmake-qt4 -r)
+    make (or mingw32-make or nmake or jom, depending on your platform)
+
+Установка (не обязятельно):
+    sudo make install INSTALL_ROOT=/usr/local/qbs
+
+Сборка документации:
+    make docs
+
+Установка документации (не обязятельно):
+    sudo make install_docs INSTALL_ROOT=/usr/local/qbs
+
+Регистрация библиотек
+    sudo su root -c "echo '/usr/local/qbs/lib' > /etc/ld.so.conf.d/qbs.conf"
+    sudo ldconfig
+
+Регистрация в PATH:
+    sudo su root -c "echo 'export PATH=\$PATH:/usr/local/qbs/bin' > /etc/profile.d/qbs.sh"
+    Перезагрузка.
+
+
+Установка под Windows:
+    Установить Qt Framework
+        http://qt-project.org/downloads
+
+        Создать новую переменную окружения, например: QTDIR = c:\Qt\4.8.6-mingw482
+        В переменную окружения Path добавить QTDIR:
+            Path = %QTDIR%\bin; ...
+
+    Для сборок под MSVC
+        Установить Microsoft Visual C++ 2013 Redistributable Package
+        http://softreview.ucoz.ru/load/10-1-0-196
+        http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x86.exe
+
+    Для сборок под MinGW
+        Перед инсталляцией Qt Framework нужно установить компилятор (версия 4.8.2). Для Qt нужен вариант i686.
+        amd64: http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.8.2/threads-win32/seh/
+        i686:  http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.8.2/threads-posix/dwarf/
+
+        Создать новую переменную окружения, например: MINGW = c:\MinGW\4.8.2\
+        В переменную окружения Path добавить MINGW:
+            Path = %QTDIR%\bin;%MINGW%\bin; ...
+
+        Перезагрузка.
+
+        Установить Qt Framework for MinGW (qt-opensource-windows-x86-mingw482-4.8.6-1.exe)
+        http://download.qt-project.org/official_releases/qt/4.8/4.8.6/qt-opensource-windows-x86-mingw482-4.8.6-1.exe
+
+        После установки в файле QTDIR\mkspecs\default\qmake.conf выполнить замену
+        "${MINGW482_INSTDIR}" на реальный путь прописанный в переменной окружения QTDIR.
+
+    Установить Git for Windows (инсталлятор ставит Bash-консоль)
+        http://git-scm.com/download/win
+
+    Установка уже собранной QBS:
+        Страница загрузки QBS для Windows
+        http://download.qt-project.org/official_releases/qbs/
+
+        Скачать эту или последнюю доступную версию
+        http://download.qt-project.org/official_releases/qbs/1.2.1/qbs-1.2.1.zip
+
+        Распаковать в директорию инсталляции, например: c:\Qt\qbs-1.2.1
+
+    Самостоятельная сборка:
+        Запустить windows-консоль (cmd.exe)
+        Перейти в диреторию git-репозитория:
+            cd c:\Qt\qbs
+
+        Выполнить:
+            qmake -r
+
+        Если сборка под MS VisualStudio, то перед началом сборки выполнить следующий
+        bat-файл (для VS2013 выполнить):
+            "c:\Program Files\Microsoft Visual Studio 12.0\Common7\Tools\vsvars32.bat"
+
+        Сборка:
+            nmake (для MSVC)
+            mingw32-make.exe (для MinGW)
+
+        Проверка работоспособности:
+            cd bin
+            qbs help
+
+    Создать новую переменную окружения, например: QBS = c:\Qt\qbs-1.2.1
+    В переменную окружения Path добавить QBS:
+        Path = %QTDIR%\bin;%MINGW%\bin;%QBS%\bin; ...
+
+    Перезагрузка.
+
+
+Настройка:
+    Материал по теме:
+        http://doc-snapshot.qt-project.org/qbs/configuring.html
+
+    Расположение настроек qbs (консоль):
+        ~/.config/QtProject/qbs.conf
+
+    Расположение настроек qbs (QtCreator):
+        ~/.config/QtProject/qtcreator/qbs.conf
+
+    Список профилей (при первом запуске пустой список):
+        qbs config --list profiles
+
+    Список всех парамтеров:
+        qbs config --list
+
+    Детектирование тулчейнов:
+        qbs setup-toolchains --detect  (или qbs.exe setup-toolchains --detect)
+        или
+
+        Если компилятор находится не в стандартной директори:
+            qbs setup-toolchains --type gcc /usr/local/gcc/4.8.3/bin/g++ gcc483
+
+            Для Windpws:
+            qbs setup-toolchains --type mingw c:\MinGW\4.8.2\bin\g++.exe mingw482
+
+    Если профилей тулчейнов несколько (gcc, clang | MSVC2008_x86, MSVC2010_x86, mingw482),
+    то нужно определиться с профилем по умолчанию:
+        qbs config defaultProfile gcc (или gcc483, или mingw482)
+
+    Детектирование профилей qt:
+        qbs setup-qt --detect
+
+        или если qt 4.8.6 не детектируется:
+        qbs setup-qt /usr/lib/x86_64-linux-gnu/qt4/bin/qmake qt486
+
+        или (для Windows)
+        qbs-setup-qt.exe c:\Qt\4.8.6-mingw482\bin\qmake.exe qt486mg
+
+    Для профилей qt нужно явно указать профиль тулчейна. Связываем профиль qt (qt486)
+    с тулчейном gcc:
+        qbs config profiles.qt486.baseProfile gcc
+        или
+        qbs config profiles.qt486.baseProfile mingw482
+
+    Для профилей qt нужно явно выставить свойство staticBuild в false.
+        qbs config profiles.qt486.Qt.core.staticBuild false
+

@@ -1,0 +1,132 @@
+Источники:
+  http://caffe.berkeleyvision.org/installation.html
+
+[compiler]
+sudo apt-get install build-essential gfortran
+
+[components]
+sudo apt-get install \
+  protobuf-compiler libprotobuf-dev libleveldb-dev libsnappy-dev \
+  libhdf5-serial-dev libgoogle-glog-dev libgflags-dev liblmdb-dev \
+  python-numpy libboost1.55-all-dev \
+
+  Компактная установка вместо libboost1.55-all-dev:
+    libboost-system1.55-dev libboost-thread1.55-dev libboost-filesystem1.55-dev \
+    libboost-regex1.55-dev
+
+[OpenBLAS]
+github: https://github.com/xianyi/OpenBLAS
+cd ~/OpenBLAS
+git clean -dfx
+git checkout -t origin/release-0.3.0
+mkdir -p build && cd build
+
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/openblas/0.3.2 \
+  -D CMAKE_INSTALL_LIBDIR=lib \
+  .. \
+
+make -j4
+sudo make install
+
+
+[MKL-DNN]
+github: https://github.com/01org/mkl-dnn
+cd ~/mkl-dnn
+./scripts/prepare_mkl.sh
+mkdir -p build && cd build
+
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/mkldnn/0.7.0 \
+  -D CMAKE_INSTALL_RPATH="$ORIGIN/../lib:$ORIGIN/" \
+  .. \
+
+[Caffe-BVLC]
+github: https://github.com/BVLC/caffe
+cd ~/Caffe-BVLC
+git clean -dfx
+git checkout -t origin/master
+mkdir -p build && cd build
+
+В начало файла CMakeLists.txt добавить
+if(POLICY CMP0022)
+  cmake_policy(SET CMP0022 OLD)
+endif()
+
+export OpenBLAS_HOME=/opt/openblas/0.2.20
+export OpenBLAS_HOME=/opt/openblas/0.3.2
+export OpenBLAS_HOME=/home/hkarel/CProjects/Caffe-Intel/external/mkl/mklml_lnx_2018.0.1.20171227
+
+export OpenCV_DIR=/opt/opencv/3.4
+
+Сборка без CUDA
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/caffe/ssd/1.0.0 \
+  -D CPU_ONLY=ON \
+  -D BUILD_SHARED_LIBS=ON \
+  -D BUILD_python=OFF \
+  -D BUILD_matlab=OFF \
+  -D BUILD_docs=OFF \
+  -D BUILD_python_layer=OFF \
+  -D BLAS=MKL \
+  -D USE_OPENCV=OFF \
+  -D ALLOW_LMDB_NOLOCK=ON \
+  .. \
+
+Сборка с CUDA для серверов cuda-srvX
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/caffe-bvlc/1.0.0 \
+  -D BUILD_SHARED_LIBS=ON \
+  -D BUILD_matlab=OFF \
+  -D BUILD_docs=OFF \
+  -D BLAS=Open \
+  .. \
+
+
+[Caffe-Intel]
+github: https://github.com/intel/caffe
+cd ~/Caffe-Intel
+git clean -dfx
+mkdir -p build && cd build
+
+Версия: 1.1.0
+Текущий коммит сборки: 583299d8770d5c09a8c0b44a4dfbda45ac0942b0
+
+cmake \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_INSTALL_PREFIX=/opt/caffe/intel/1.1.0 \
+  -D CPU_ONLY=ON \
+  -D BUILD_SHARED_LIBS=ON \
+  -D BUILD_python=ON \
+  -D BUILD_matlab=OFF \
+  -D BUILD_docs=OFF \
+  -D BUILD_python_layer=ON \
+  -D BLAS=MKL \
+  -D USE_OPENCV=OFF \
+  .. \
+
+
+# v1.1.0
+sudo cp -f  ../external/mkldnn/install/include/{*.h,*.hpp}                     /opt/caffe/intel/1.1.0/include && \
+sudo cp -fP ../external/mkldnn/install/lib/libmkldnn.so*                       /opt/caffe/intel/1.1.0/lib && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/include/*.h            /opt/caffe/intel/1.1.0/include && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/lib/libiomp5.so        /opt/caffe/intel/1.1.0/lib && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/lib/libmklml_intel.so  /opt/caffe/intel/1.1.0/lib && \
+sudo cp -f  ../external/mlsl/l_mlsl_2017.2.018/intel64/include/{*.h,*.hpp}     /opt/caffe/intel/1.1.0/include && \
+sudo cp -fP ../external/mlsl/l_mlsl_2017.2.018/intel64/lib/libmlsl.so*         /opt/caffe/intel/1.1.0/lib && \
+sudo cp -fP ../external/mlsl/l_mlsl_2017.2.018/intel64/lib/libmpi.so*          /opt/caffe/intel/1.1.0/lib \
+
+# v1.1.1a
+sudo cp -f  ../include/mpi*                                                    /opt/caffe/intel/1.1.1a/include && \
+sudo cp -f  ../external/mkldnn/install/include/{*.h,*.hpp}                     /opt/caffe/intel/1.1.1a/include && \
+sudo cp -fP ../external/mkldnn/install/lib/libmkldnn.so*                       /opt/caffe/intel/1.1.1a/lib && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/include/*.h            /opt/caffe/intel/1.1.1a/include && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/lib/libiomp5.so        /opt/caffe/intel/1.1.1a/lib && \
+sudo cp -f  ../external/mkl/mklml_lnx_2018.0.1.20171227/lib/libmklml_intel.so  /opt/caffe/intel/1.1.1a/lib && \
+sudo cp -f  ../external/mlsl/l_mlsl_2018.0.003/intel64/include/{*.h,*.hpp}     /opt/caffe/intel/1.1.1a/include && \
+sudo cp -fP ../external/mlsl/l_mlsl_2018.0.003/intel64/lib/libmlsl.so*         /opt/caffe/intel/1.1.1a/lib && \
+sudo cp -fP ../external/mlsl/l_mlsl_2018.0.003/intel64/lib/libmpi.so*          /opt/caffe/intel/1.1.1a/lib \
