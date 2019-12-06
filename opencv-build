@@ -39,6 +39,7 @@ cmake \
   -D WITH_IPP=OFF \
   -D WITH_1394=OFF \
   -D WITH_JPEG=ON \
+  -D BUILD_TIFF=ON \
   -D WITH_FFMPEG=ON \
   -D WITH_V4L=ON \
   -D WITH_GTK=OFF \
