@@ -1,0 +1,46 @@
+Источники:
+  https://null-src.com/posts/gpg-apt-repository/post.php
+  https://wiki.debian.org/DebianRepository/SetupWithReprepro?action=show&redirect=SettingUpSignedAptRepositoryWithReprepro  
+  
+RepoPath = /var/www/html/repo
+UserName = aisexpert
+Email = ais@expert.ru
+  
+[components]
+    sudo apt-get install gnupg reprepro
+
+Create repository directory tree
+    - cd $RepoPath
+    - mkdir conf && cd conf
+    - nano distributions
+        Origin: your alias or project name
+        Label: project name
+        Suite: stable
+        Codename: distro1 # example, "Trusty" for Ubuntu 14.04 Trusty Tahr
+        Version: version number of distro1 # example, "14.04" for Ubuntu 14.04 Trusty Tahr
+        Architectures: i386 amd64 # may vary depending on platform, for example "iphoneos-arm"
+        Components: main
+        Description: description of repo or project
+        SignWith: yes
+    
+Creating GPG authentication key, export key to repository, create repository
+    - mkdir .gnupg && cd .gnupg
+    - gpg --full-generate-key (тип ключа: 1.RSA и RSA; размер: 4096; срок действия - 0)
+    - gpg --export-secret-key -a "$UserName" > ./secret.key.gpg
+    - gpg --armor --export $UserName $Email >> $RepoPath/KEY.deb.key.gpg
+    - cd $RepoPath && reprepro --ask-passphrase -Vb ./ export    
+
+Add package
+    - cd $RepoPath
+    - reprepro --ask-passphrase -Vb . includedeb [Codename] [path to package]/[package filename].deb
+
+Remove package
+    - cd $RepoPath
+    - reprepro --ask-passphrase -Vb ./ remove [Codename] [package name]
+    
+Install public key (for clients)
+    - sudo apt-key add $RepoPath/KEY.deb.key.gpg
+    
+Install secret key (for deb server)
+    - sudo gpg --import .gnupg/secret.key.gpg
+    
