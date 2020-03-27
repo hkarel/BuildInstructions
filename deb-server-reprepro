@@ -1,6 +1,13 @@
 Источники:
   https://null-src.com/posts/gpg-apt-repository/post.php
+  
   https://wiki.debian.org/DebianRepository/SetupWithReprepro?action=show&redirect=SettingUpSignedAptRepositoryWithReprepro  
+  
+  https://wiki.debian.org/ru/CreateLocalRepo
+  
+  https://www.howtoforge.com/setting-up-an-apt-repository-with-reprepro-and-nginx-on-debian-wheezy?__cf_chl_captcha_tk__=6239e00e0d1952241552bde65a272f8180ceb7e3-1585059677-0-AZ0YtvASdrLHHZ6nyMDCWopWfyzv1eu2mfVBCC7TUQm-SYjpDQb3nvOgGMJgM5_0JFdnBdf7ANjoJXNWdMau8_IopIZgHxKa2nSWqS-mBfOJaoGs_uJRIoy2jD3issaI-o-MXJ1vLFEew9M5Besd0ZftRHsPqMeU16p9wN1nxSW_wBnonA-xgbqz8NfZcq8TDyXjWNgBXyv6Rso1638kC8tkqCOjIijEmzt4PIPEehljpbKSbrmQo2lg-CWupY-RrnipWciOP47LD_jPjZhX6gO3lP5Kud8GYafEqnDDQ-wmL6afQ-RBEqUsjKHWpoXpLBieCSyvCF0_XCMvSgjnP-Xq7sUl47FTGiOzMNndqhC7ZRjqrBydlTt1rLFKDeQmvPJshMM9fTcCZWh4TeHEBZolAEoqr3_ntZ_ZEWlWiNTIgx-PaP9DrqPviyqJRAKJKQ
+  
+  https://wiki.it-kb.ru/unix-linux/advanced-packaging-tool/replace-deb-packages-in-reprepro
   
 RepoPath = /var/www/html/repo
 UserName = aisexpert
@@ -27,7 +34,7 @@ Creating GPG authentication key, export key to repository, create repository
     - mkdir .gnupg && cd .gnupg
     - gpg --full-generate-key (тип ключа: 1.RSA и RSA; размер: 4096; срок действия - 0)
     - gpg --export-secret-key -a "$UserName" > ./secret.key.gpg
-    - gpg --armor --export $UserName $Email >> $RepoPath/KEY.deb.key.gpg
+    - gpg --armor --export $UserName $Email > $RepoPath/KEY.deb.key.gpg
     - cd $RepoPath && reprepro --ask-passphrase -Vb ./ export    
 
 Add package
@@ -43,4 +50,7 @@ Install public key (for clients)
     
 Install secret key (for deb server)
     - sudo gpg --import .gnupg/secret.key.gpg
+    
+Sign repo (in directory "dist")
+    - sudo gpg --armor -o Release.gpg -sb Release
     

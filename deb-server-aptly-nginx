@@ -1,0 +1,135 @@
+--- Материал по теме ---
+https://habr.com/ru/post/225825/
+https://www.aptly.info/doc/overview/
+http://fx-files.ru/archives/1462
+
+--- Установка aptly ---
+    sudo nano /etc/apt/source.list.d/aptly.list
+        deb http://repo.aptly.info/ squeeze main
+
+    sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+    sudo apt-get update
+    sudo apt-get install aptly
+
+--- Настройка и создание репозитория ---
+    PROJECT      = aisexpert
+    OS_VERS      = ubuntu1604
+    DISTRIBUTION = stable (или testing)
+    COMPONENT    = main (или contrib, или non-free)
+    REPO_NAME    = PROJECT-OS_VERS-DISTRIBUTION
+
+    Конфигурация
+        sudo mkdir /var/repos/PROJECT
+
+    Пример:
+        sudo mkdir /var/repos/aisexpert
+
+        sudo nano ~/.aptly.conf
+        В секцию "FileSystemPublishEndpoints" добавить:
+                "PROJECT": {
+                        "rootDir": "/var/repos/PROJECT/",
+                        "linkMethod": "symlink"
+                }
+        Пример:
+                "aisexpert": {
+                        "rootDir": "/var/repos/aisexpert/",
+                        "linkMethod": "symlink"
+                }
+            
+    ---
+    Создание нового репозиотрия
+        sudo aptly repo create -comment="PROJECT DISTRIBUTION repository" -distribution="DISTRIBUTION" -architectures="amd64" -component="COMPONENT" REPO_NAME
+
+    Пример:
+        sudo aptly repo create -comment="AisExpert stable repository" -distribution="stable" -architectures="amd64" -component="main" aisexpert-ubuntu1604-stable
+
+    ---
+    Добавить deb-пакет в репозиторий
+        sudo aptly repo add REPO_NAME <path to deb>
+
+    Пример:
+        sudo aptly repo add aisexpert-ubuntu1604-stable <path to deb>
+
+    ---
+    Первичная публикация репозитория:
+        sudo aptly publish repo REPO_NAME filesystem:PROJECT:OS_VERS
+        passphrase: tochka
+
+    Пример:
+        sudo aptly publish repo aisexpert-ubuntu1604-stable filesystem:aisexpert:ubuntu1604
+
+    ---
+    Чтобы опубликовать новые добавленные пакеты:
+        1) добавить пакеты
+        2) sudo aptly publish update DISTRIBUTION filesystem:PROJECT:OS_VERS
+
+    Пример:
+        sudo aptly publish update stable filesystem:aisexpert:ubuntu1604
+
+    ---
+    Посмотреть список репозиториев:
+         sudo aptly repo list
+
+    ---
+    Посмотреть подробную информацию по конкретному репозиторию
+        sudo aptly repo show --with-packages REPO_NAME
+
+    Пример:
+        sudo aptly repo show --with-packages aisexpert-ubuntu1604-stable
+
+    ---
+    Чтобы удалить публикацию репозитория:
+        sudo aptly publish drop DISTRIBUTION filesystem:PROJECT:OS_VERS
+
+    Пример:
+        sudo aptly publish drop stable filesystem:aisexpert:ubuntu1604
+    
+    ---
+    Чтобы удалить репозиторий:
+        1) удалить публикацию репозитория
+        2) sudo aptly repo drop REPO_NAME
+
+    Пример:
+        sudo aptly repo drop aisexpert-ubuntu1604-stable
+        
+--- Настройка nginx ---
+    sudo nano /etc/nginx/sites-available/apt.vhost
+
+        server {
+            listen 4188;
+            server_name intranet.tochka.ai;
+
+            access_log /var/log/nginx/packages-error.log;
+            error_log /var/log/nginx/packages-error.log;
+
+            location / {
+                root /var/repos/;
+                index /var/www/html/index.nginx-debian.html;
+                autoindex on;
+            }
+
+            location ~ /(.*)/conf {
+                deny all;
+            }
+
+            location ~ /(.*)/db {
+                deny all;
+            }
+        }
+
+    cd /etc/nginx
+    sudo ln -srf ./sites-available/apt.vhost ./sites-enabled/apt.vhost
+    sudo systemctl restart nginx.service
+    
+--- Добавление репозитория для клиента ---
+    sudo apt-key add tochka-ai.key.gpg
+    cd /etc/apt/source.list.d
+    sudo nano tochka.ai.list
+        deb [arch=amd64] http://intranet.tochka.ai:4188/PROJECT/OS_VERS DISTRIBUTION COMPONENT
+
+    Пример:
+        deb [arch=amd64] http://intranet.tochka.ai:4188/aisexpert/ubuntu1604 stable main
+
+    sudo apt-get update
+
+
