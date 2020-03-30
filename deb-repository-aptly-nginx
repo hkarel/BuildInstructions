@@ -140,5 +140,17 @@ http://fx-files.ru/archives/1462
         deb [arch=amd64] http://intranet.tochka.ai:4188/aisexpert/ubuntu1604 stable main
 
     sudo apt-get update
+    
+--- Просмотр версий пакетов на машине клиента ---
+    sudo apt-cache policy <package>
+    
+    Пример:
+        sudo apt-cache policy aisexpert
+        
+    sudo apt-cache showpkg <package>
+    
+    Пример:
+        sudo apt-cache showpkg aisexpert
+
 
 
