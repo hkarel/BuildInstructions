@@ -1,4 +1,4 @@
-Конфигурирование отладочной сборки Qt 4.8
+Конфигурирование сборки Qt 4.8 под Ubuntu 20.04
 
 Установить:
     sudo apt-get install libxtst-dev libxrender-dev libicu-dev libdbus-1-dev libssl-dev zlib1g-dev
@@ -7,7 +7,7 @@
     apt-get source qt4-default
 
     или с официального файта Qt-ов
-    wget http://download.qt-project.org/official_releases/qt/4.8/4.8.6/qt-everywhere-opensource-src-4.8.6.tar.gz
+    wget https://download.qt.io/archive/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz
 
 Переходим в директорию с исходным кодом:
     mv qt4-x11-4.8.4+dfsg qt4-x11-4.8.4
@@ -18,8 +18,29 @@
     cd qt-everywhere-opensource-src-4.8.6 \
 
 Конфигурируем:
+    Для сборки с компилятором GCC8 и выше - нужно добавить параметр QMAKE_CXXFLAGS
+    в файл mkspecs/common/g++-base.conf
+        QMAKE_CXXFLAGS = $$QMAKE_CFLAGS -std=gnu++98
+
+        С этим флагом не собирается
+        QMAKE_CXXFLAGS = $$QMAKE_CFLAGS -std=gnu++11
+
+    Под Ubuntu 20.04 собрать не удалось
     ./configure \
-        -verbose -prefix /usr/local/qt/4.8.6-debug \
+        -verbose -prefix /opt/qt/4.8.7 \
+        -release -opensource --enable-confirm-license \
+        -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
+        -optimized-qmake \
+        -no-qt3support -no-webkit -no-nis -no-cups \
+        -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
+        -no-dbus -no-openssl \
+
+        Для сборки в режиме совместимости для старых проектов эти опции не нужны
+        -dbus-linked -openssl-linked \
+
+    Отладочная сборка:
+    ./configure \
+        -verbose -prefix /opt/qt/4.8.7-debug \
         -debug -opensource --enable-confirm-license \
         -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
         -optimized-qmake \
@@ -30,19 +51,9 @@
         -separate-debug-info \
 
 
-    ./configure
-        -verbose -prefix /home/hkarel/Tools/qt4-x11-4.8.6 \
-        -debug -opensource --enable-confirm-license \
-        -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
-        -optimized-qmake \
-        -no-qt3support -no-webkit -no-nis -no-cups \
-        -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg \
-        -dbus-linked -openssl-linked \
-
-
-    Конфигурация под Centos 6 (без графики):
+    Конфигурация без графики:
     ./configure \
-        -verbose -prefix /usr/local/qt/4.8.6-base \
+        -verbose -prefix /opt/qt/4.8.7-base \
         -release -opensource --enable-confirm-license \
         -nomake tools -nomake examples -nomake demos -nomake docs -nomake translations \
         -optimized-qmake \
@@ -57,25 +68,18 @@
         -no-gtkstyle -no-sm -no-xshape -no-xsync -no-xinerama -no-xcursor -no-xfixes -no-xrandr -no-xrender -no-mitshm \
         -no-fontconfig -no-xinput -no-xkb -no-glib \
 
-        
-    // ??? Для сборки Qt со соторонним компилятором; так же нужно
-    // ??? изменить QMAKE_CXX и QMAKE_CC в mkspecs/common/g++-base.conf
-    CXX=/usr/local/gcc/4.8.3/bin/g++; \
-    CC=/usr/local/gcc/4.8.3/bin/gcc; \
-    QMAKE_CXX=/usr/local/gcc/4.8.3/bin/g++; \
-    QMAKE_CC=/usr/local/gcc/4.8.3/bin/gcc; \
+    Для сборки со сторонним компилятором нужно добавить эти строки
+    в командную строку перед ./configure
+        LD_LIBRARY_PATH=/opt/gcc/8.4.0/lib64 \
+        CC=/opt/gcc/8.4.0/bin/gcc \
+        CXX=/opt/gcc/8.4.0/bin/g++ \
+        QMAKE_CC=/opt/gcc/8.4.0/bin/gcc \
+        QMAKE_CXX=/opt/gcc/8.4.0/bin/g++ \
 
-
-    Сборка qbs с gcc-4.8.3:
-    /usr/local/qt/4.8.6-base/bin/qmake -r \
-        QMAKE_CC=/usr/local/gcc/4.8.3/bin/gcc \
-        QMAKE_LINK_C=/usr/local/gcc/4.8.3/bin/gcc \
-        QMAKE_CXX=/usr/local/gcc/4.8.3/bin/g++ \
-        QMAKE_LINK=/usr/local/gcc/4.8.3/bin/g++ \
-        CONFIG+=qbs_not_build_config_ui \
-
-    /usr/local/qt/4.8.6-base/bin/qmake -r \
-        CONFIG+=qbs_not_build_config_ui \
+    Для сборки со сторонним компилятором нужно изменить следующие параметры
+    в файле mkspecs/common/g++-base.conf
+        QMAKE_CC=/opt/gcc/8.4.0/bin/gcc
+        QMAKE_CXX=/opt/gcc/8.4.0/bin/g++
 
 
 Для переконфигурации:
@@ -93,8 +97,8 @@
 Исключить Google WebKit:
     qt4.8-build-rm-webkit ./
 
-Сборка:
-    make -j4
+Сборка со сторонним компилятором:
+    LD_LIBRARY_PATH=/opt/gcc/8.4.0/lib64  make -j4
 
 Установка:
     sudo make install
