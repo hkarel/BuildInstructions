@@ -78,6 +78,15 @@ http://fx-files.ru/archives/1462
         sudo aptly repo show --with-packages aisexpert-ubuntu1604-stable
 
     ---
+    Удалить deb-пакет из репозитория
+        1) sudo aptly remove add REPO_NAME <deb-packet name>
+        2) sudo aptly publish update DISTRIBUTION filesystem:PROJECT:OS_VERS
+
+    Пример:
+        1) sudo aptly repo remove aisexpert-ubuntu1604-testing aisexpert_0.9.29-20200325gitc1b9947_amd64
+        2) sudo aptly publish update testing filesystem:aisexpert:ubuntu1604
+
+    ---
     Чтобы удалить публикацию репозитория:
         sudo aptly publish drop DISTRIBUTION filesystem:PROJECT:OS_VERS
 
