@@ -57,6 +57,7 @@ http://fx-files.ru/archives/1462
 
     Пример:
         sudo aptly publish repo aisexpert-ubuntu1604-stable filesystem:aisexpert:ubuntu1604
+        passphrase: tochka
 
     ---
     Чтобы опубликовать новые добавленные пакеты:
@@ -65,10 +66,11 @@ http://fx-files.ru/archives/1462
 
     Пример:
         sudo aptly publish update stable filesystem:aisexpert:ubuntu1604
+        passphrase: tochka
 
     ---
     Посмотреть список репозиториев:
-         sudo aptly repo list
+        sudo aptly repo list
 
     ---
     Посмотреть подробную информацию по конкретному репозиторию
@@ -79,7 +81,7 @@ http://fx-files.ru/archives/1462
 
     ---
     Удалить deb-пакет из репозитория
-        1) sudo aptly remove add REPO_NAME <deb-packet name>
+        1) sudo aptly repo remove REPO_NAME <deb-packet name>
         2) sudo aptly publish update DISTRIBUTION filesystem:PROJECT:OS_VERS
 
     Пример:
