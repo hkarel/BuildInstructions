@@ -37,6 +37,17 @@ http://fx-files.ru/archives/1462
                 }
             
     ---
+    Посмотреть список репозиториев:
+        sudo aptly repo list
+
+    ---
+    Посмотреть подробную информацию по конкретному репозиторию
+        sudo aptly repo show --with-packages REPO_NAME
+
+    Пример:
+        sudo aptly repo show --with-packages aisexpert-ubuntu1604-stable
+
+    ---
     Создание нового репозиотрия
         sudo aptly repo create -comment="PROJECT DISTRIBUTION repository" -distribution="DISTRIBUTION" -architectures="amd64" -component="COMPONENT" REPO_NAME
 
@@ -67,17 +78,6 @@ http://fx-files.ru/archives/1462
     Пример:
         sudo aptly publish update stable filesystem:aisexpert:ubuntu1604
         passphrase: tochka
-
-    ---
-    Посмотреть список репозиториев:
-        sudo aptly repo list
-
-    ---
-    Посмотреть подробную информацию по конкретному репозиторию
-        sudo aptly repo show --with-packages REPO_NAME
-
-    Пример:
-        sudo aptly repo show --with-packages aisexpert-ubuntu1604-stable
 
     ---
     Удалить deb-пакет из репозитория
