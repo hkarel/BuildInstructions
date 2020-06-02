@@ -2,11 +2,11 @@
 git clone https://github.com/FFmpeg/FFmpeg.git
 
 [required]
-sudo apt-get install yasm -y --allow-unauthenticated
+sudo apt-get install yasm /* флаг по возможности не использовать --allow-unauthenticated */
 sudo apt-get install libv4l-dev
 
-[required ? проверить нужны ли]
-sudo apt-get install libx264-148 libx264-dev libx265-165 libx265-dev
+[recommended]
+sudo apt-get install libx264-dev libx265-dev
 
 cd ~/FFmpeg
 git clean -dfx
