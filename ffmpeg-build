@@ -13,6 +13,8 @@ git clean -dfx
 
 ./configure \
   --prefix=/opt/ffmpeg/4.2 \
+  --cc=/opt/gcc/8.4.0/bin/gcc \
+  --cxx=/opt/gcc/8.4.0/bin/g++ \
   --disable-static \
   --disable-doc \
   --enable-shared \
