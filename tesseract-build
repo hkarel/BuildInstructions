@@ -1,0 +1,83 @@
+[Источник]
+https://tesseract-ocr.github.io/tessdoc/Compiling
+
+[models]
+https://github.com/tesseract-ocr/tessdata
+
+[required]
+sudo apt-get install libjpeg-dev libpng-dev libtiff-dev zlib1g-dev
+
+[leptonica]
+git clone https://github.com/DanBloomberg/leptonica
+
+cd ~/leptonica
+git clean -dfx && mkdir -p build && cd build
+
+cmake \
+  -D CMAKE_INSTALL_PREFIX=/opt/leptonica/1.81.0 \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
+  -D CMAKE_CXX_COMPILER=/opt/gcc/8.4.0/bin/g++ \
+  .. \
+
+
+[tesseract]
+git clone https://github.com/tesseract-ocr/tesseract
+
+cd ~/tesseract
+git clean -dfx && mkdir -p build && cd build
+
+PKG_CONFIG_PATH=/opt/leptonica/1.81.0/lib/pkgconfig \
+cmake \
+  -D CMAKE_INSTALL_PREFIX=/opt/tesseract/5.0.0 \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
+  -D CMAKE_CXX_COMPILER=/opt/gcc/8.4.0/bin/g++ \
+  -D OPENMP_BUILD=OFF \
+  -D GRAPHICS_DISABLED=ON \
+  -D DISABLED_LEGACY_ENGINE=ON \
+  -D BUILD_TRAINING_TOOLS=OFF \
+  -D BUILD_TESTS=OFF \
+  .. \
+
+
+------------------------------------------------------------------------
+
+
+  -D CMAKE_MODULE_PATH=/opt/leptonica/1.81.0/lib/cmake \
+
+  -D -DCMAKE_PREFIX_PATH=/opt/leptonica/1.81.0/lib/cmake \
+  -D Leptonica_DIR=/opt/leptonica/1.80.0 \
+
+  -D Leptonica_INCLUDE_DIRS=/opt/leptonica/1.80.0/include/leptonica \
+  -D Leptonica_LIBRARIES=/opt/leptonica/1.80.0/lib \
+
+
+./autogen.sh
+
+LIBLEPT_HEADERSDIR=/opt/leptonica/1.80.0 \
+./configure \
+  --prefix=/opt/tesseract/5.0.0 \
+  --without-PACKAGE \
+  --with-extra-includes=/opt/leptonica/1.80.0/include \
+  --with-extra-libraries=/opt/leptonica/1.80.0/lib \
+
+
+
+option(OPENMP_BUILD "Build with openmp support" OFF)  # see issue #1662
+option(GRAPHICS_DISABLED "Disable disable graphics (ScrollView)" OFF)
+option(DISABLED_LEGACY_ENGINE "Disable the legacy OCR engine" OFF)
+option(ENABLE_LTO "Enable link-time optimization" OFF)
+option(BUILD_TRAINING_TOOLS "Build training tools" ON)
+option(BUILD_TESTS "Build tests" OFF)
+option(USE_SYSTEM_ICU "Use system ICU" OFF)
+if(NOT ${CMAKE_VERSION} VERSION_LESS "3.15.0")
+    if(WIN32 AND MSVC)
+        option(WIN32_MT_BUILD "Build with MT flag for MSVC" OFF)
+    endif()
+
+
+    ./autogen.sh
+    LIBLEPT_HEADERSDIR=/opt/leptonica/$VERSION/include/ ./configure --prefix=/opt/tesseract/$VERSION --with-extra-libraries=/opt/leptonica/$VERSION/lib
+    make
+    make install
