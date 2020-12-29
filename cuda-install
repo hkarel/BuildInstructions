@@ -1,5 +1,18 @@
 Страница загрузки:
-  https://developer.nvidia.com/cuda-10.0-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1404&target_type=deblocal
+  https://developer.nvidia.com/cuda-11.0-update1-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=2004&target_type=debnetwork
 
-Выбирать 14.04 "deb (local)"
-Далее по инструкции.
+Выбрать:
+  20.04 "deb (network)"
+
+Далее по инструкции:
+  wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+  sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+  sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+  sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+  sudo apt-get update
+
+Ставить:
+  sudo apt-get install cuda-11-0=11.0.3-1
+
+Запрет на обновление:
+  sudo apt-mark hold cuda-11-0
