@@ -18,7 +18,7 @@ sudo apt-get install \
   libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
 
 [Для сборки с собранной библиотекой FFMPEG]
-FFMPEG_VERSION=4.3; \
+FFMPEG_VERSION=4.4; \
 export PKG_CONFIG_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib/pkgconfig; \
 export LD_LIBRARY_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}; \
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"; \
@@ -28,7 +28,7 @@ cd ~/opencv
 git clean -dfx && mkdir -p build && cd build
 
 cmake \
-  -D CMAKE_INSTALL_PREFIX=/opt/opencv/3.4.13 \
+  -D CMAKE_INSTALL_PREFIX=/opt/opencv/3.4.14 \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
   -D CMAKE_CXX_COMPILER=/opt/gcc/8.4.0/bin/g++ \
