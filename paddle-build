@@ -1,0 +1,67 @@
+[Инструкция по сборке]
+https://www.paddlepaddle.org.cn/documentation/docs/en/1.5/beginners_guide/install/compile/compile_Ubuntu_en.html
+
+[Увеличить количество разрешенных файловых дескрипторов]
+  В директории /etc/security/limits.d создать файл nofile.conf со следующим
+  содержимым:
+  #<domain>      <type>  <item>         <value>
+  #
+  USER_NAME      soft    nofile         4096
+  USER_NAME      hard    nofile         4096
+
+  USER_NAME заменить на имя текущего пользователя.
+  Перезагрузить компьютер.
+
+[Источник]
+git clone git@github.com:TochkaAI/Paddle.git
+git checkout -t origin/release/2.1
+
+cd ~/paddle
+rm -rf build && mkdir build && cd build
+
+export PADDLE_PREFIX=/opt/paddle/2.1 && echo "PADDLE_PREFIX: $PADDLE_PREFIX"
+
+cmake \
+  -D CMAKE_INSTALL_PREFIX=${PADDLE_PREFIX} \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin \
+                                -Wl,-rpath,\$ORIGIN \
+                                -Wl,-rpath,${PADDLE_PREFIX}/third_party/install/mkldnn/lib \
+                                -Wl,-rpath,${PADDLE_PREFIX}/third_party/install/mklml/lib" \
+  -D WITH_CONTRIB=OFF \
+  -D WITH_AVX=ON \
+  -D WITH_MKL=ON \
+  -D WITH_MKLDNN=ON  \
+  -D WITH_TESTING=OFF \
+  -D WITH_INFERENCE_API_TEST=OFF \
+  -D ON_INFER=ON \
+  -D WITH_PYTHON=OFF \
+  -D WITH_GPU=OFF \
+  -D WITH_NCCL=OFF \
+  -D WITH_STRIP=ON \
+  .. \
+
+make -j$(nproc)
+# sudo make install - не работает
+
+[Установка]
+  Создать директорию для установки:
+  sudo mkdir -p /opt/paddle/2.1
+
+  После завершения сборки скопировать C++ вариант в директорию назначения:
+  sudo cp -a ./paddle_inference_install_dir/{paddle,third_party} /opt/paddle/2.1
+
+[Сборка с поддержкой Python3]
+  Дополнительно установить:
+  sudo pip3 install protobuf
+  sudo apt-get install -y patchelf
+
+  Версия Python3 указана для Ubuntu 20.04
+  -D PY_VERSION=3.8 \
+  -D PYTHON_EXECUTABLE=/usr/bin/python3 \
+  -D PYTHON_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")  \
+  -D PYTHON_LIBRARY=$(python3 -c "import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR'))") \
+  -D PY_PIP=/usr/lib/python3/dist-packages/pip \
+  -D PY_NUMPY=/usr/lib/python3/dist-packages/numpy \
+  -D PY_WHEEL=/usr/lib/python3/dist-packages/wheel \
+  -D PY_GOOGLE.PROTOBUF=/usr/local/lib/python3.8/dist-packages/google/protobuf \
