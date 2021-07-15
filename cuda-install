@@ -7,12 +7,33 @@
 Далее по инструкции:
   wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
   sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-  sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-  sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+
+  # Подпись для репозитория (не работает)
+  #sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+
+  # Подпись для репозитория
+  wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub | sudo apt-key add -
+
+  # Добавляет репозиторий в файл sources.list
+  #sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+
+  # Добавляет репозиторий в отдельный файл nvidia-cuda.list
+  cat << EOF | sudo tee /etc/apt/sources.list.d/nvidia-cuda.list
+deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /
+# deb-src https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /
+EOF
+
   sudo apt-get update
 
-Ставить:
-  sudo apt-get install cuda-11-0=11.0.3-1
+Установить nvidia-driver:
+  Для cuda-11-3 версию 470 (или выше)
+  https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+
+Установить:
+  sudo apt-get install cuda-11-3
 
 Запрет на обновление:
-  sudo apt-mark hold cuda-11-0
+  sudo apt-mark hold cuda-11-3
+
+Посмотреть установленные пакеты:
+  dpkg -l | grep cuda

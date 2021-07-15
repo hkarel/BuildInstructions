@@ -5,49 +5,30 @@
   wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64/nvidia-machine-learning-repo-ubuntu2004_1.0.0-1_amd64.deb
 
   sudo dpkg -i nvidia-machine-learning-repo-ubuntu2004_1.0.0-1_amd64.deb
-
-  В файле /etc/apt/sources.list.d/nvidia-machine-learning.list исправить
-    deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64 /
-  на
-    deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /
-  Для 20.04 реп пустой.
-
   sudo apt-get update
 
   sudo apt-get install \
-    libcudnn8=8.0.5.39-1+cuda11.0 \
-    libcudnn8-dev=8.0.5.39-1+cuda11.0 \
-    libnvinfer7=7.2.2-1+cuda11.0 \
-    libnvinfer-dev=7.2.2-1+cuda11.0 \
-    libnvonnxparsers7=7.2.2-1+cuda11.0 \
-    libnvonnxparsers-dev=7.2.2-1+cuda11.0 \
-    libnvparsers7=7.2.2-1+cuda11.0 \
-    libnvparsers-dev=7.2.2-1+cuda11.0 \
-    libnvinfer-plugin7=7.2.2-1+cuda11.0 \
-    libnvinfer-plugin-dev=7.2.2-1+cuda11.0 \
+    libcudnn8=8.2.1.32-1+cuda11.3 \
+    libcudnn8-dev=8.2.1.32-1+cuda11.3 \
+    libnvinfer8=8.0.1-1+cuda11.3 \
+    libnvinfer-dev=8.0.1-1+cuda11.3 \
+    libnvinfer-plugin8=8.0.1-1+cuda11.3 \
+    libnvinfer-plugin-dev=8.0.1-1+cuda11.3 \
+    libnvonnxparsers8=8.0.1-1+cuda11.3 \
+    libnvonnxparsers-dev=8.0.1-1+cuda11.3 \
+    libnvparsers8=8.0.1-1+cuda11.3 \
+    libnvparsers-dev=8.0.1-1+cuda11.3 \
 
-  sudo apt-mark hold libcudnn8 libcudnn8-dev \
-                     libnvinfer7 libnvinfer-dev \
-                     libnvonnxparsers7 libnvonnxparsers-dev \
-                     libnvparsers7 libnvparsers-dev \
-                     libnvinfer-plugin7 libnvinfer-plugin-dev \
+Запрет на обновление:
+  sudo apt-mark hold cuda-11-3 \
+                     libcudnn8 libcudnn8-dev \
+                     libnvinfer8 libnvinfer-dev \
+                     libnvinfer-plugin8 libnvinfer-plugin-dev \
+                     libnvonnxparsers8 libnvonnxparsers-dev \
+                     libnvparsers8 libnvparsers-dev \
 
----
+Посмотреть установленные пакеты:
+  dpkg -l | grep -P "libcudnn|libnvinfer|libnvonnxparsers|libnvparsers" | sort
 
-Старое.
-
-sudo dpkg -i nv-tensorrt-repo-ubuntu1804-cuda10.0-trt7.0.0.11-ga-20191216_1-1_amd64.deb
-sudo apt-key add /var/nv-tensorrt-repo-cuda10.0-trt7.0.0.11-ga-20191216/7fa2af80.pub
-
-sudo apt-get update
-sudo apt-get install tensorrt
-
-sudo apt-get install tensorrt libnvinfer-plugin7=7.0.0.1-1+cuda10.0 
-                                libnvinfer7=7.0.0.1-1+cuda10.0 
-                                libnvparsers7=7.0.0.1-1+cuda10.0 
-                                libnvonnxparser76=7.0.0.1-1+cuda10.0 
-                                libnvinfer-bin=7.0.0.1-1+cuda10.0 
-                                libnvinfer-dev=7.0.0.1-1+cuda10.0 
-                                libnvinfer-plugin-dev=7.0.0.1-1+cuda10.0 
-                                libnvparsers-dev=7.0.0.1-1+cuda10.0 
-                                libnvonnxparsers-dev=7.0.0.1-1+cuda10.0 
+Удалить установленные пакеты:
+  sudo apt-get purge libcudnn* libnvinfer* libnvonnxparsers* libnvparsers*
