@@ -28,7 +28,7 @@ cd ~/opencv
 git clean -dfx && mkdir -p build && cd build
 
 cmake \
-  -D CMAKE_INSTALL_PREFIX=/opt/opencv/3.4.14 \
+  -D CMAKE_INSTALL_PREFIX=/opt/opencv/3.4.15 \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin -Wl,-rpath,\$ORIGIN" \
   -D CMAKE_INSTALL_LIBDIR=lib \
@@ -65,8 +65,11 @@ cmake \
   Параметры компилятора
     -mfpu=neon -mfp16-format=ieee
 
-
 Процессор Intel i5 2500K SandyBridge не поддерживает OpenCL
   -D WITH_VA_INTEL=ON \
   -D VA_INTEL_MSDK_ROOT=/opt/intel/mediasdk/7.0.16073669 \
 
+
+make -j$(nproc) && sudo make install
+
+git clean -dfx
