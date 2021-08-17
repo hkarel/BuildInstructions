@@ -1,5 +1,9 @@
-[Источник]
+[Материал по теме]
 http://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html
+
+[Источник]
+git clone https://github.com/opencv/opencv.git
+git checkout -t origin/3.4
 
 [compiler]
 sudo apt-get install build-essential
