@@ -7,6 +7,7 @@
   sudo dpkg -i nvidia-machine-learning-repo-ubuntu2004_1.0.0-1_amd64.deb
   sudo apt-get update
 
+[Установка для разработчика]
   sudo apt-get install \
     libcudnn8=8.2.1.32-1+cuda11.3 \
     libcudnn8-dev=8.2.1.32-1+cuda11.3 \
@@ -19,7 +20,15 @@
     libnvparsers8=8.0.1-1+cuda11.3 \
     libnvparsers-dev=8.0.1-1+cuda11.3 \
 
-Запрет на обновление:
+[Установка для рабочей станции (без dev-библиотек)]
+  sudo apt-get install \
+    libcudnn8=8.2.1.32-1+cuda11.3 \
+    libnvinfer8=8.0.1-1+cuda11.3 \
+    libnvinfer-plugin8=8.0.1-1+cuda11.3 \
+    libnvonnxparsers8=8.0.1-1+cuda11.3 \
+    libnvparsers8=8.0.1-1+cuda11.3 \
+
+[Запрет на обновление (для разработчика)]
   sudo apt-mark hold cuda-11-3 \
                      libcudnn8 libcudnn8-dev \
                      libnvinfer8 libnvinfer-dev \
@@ -27,8 +36,16 @@
                      libnvonnxparsers8 libnvonnxparsers-dev \
                      libnvparsers8 libnvparsers-dev \
 
-Посмотреть установленные пакеты:
+[Запрет на обновление (для рабочей станции)]
+  sudo apt-mark hold cuda-11-3 \
+                     libcudnn8 \
+                     libnvinfer8 \
+                     libnvinfer-plugin8 \
+                     libnvonnxparsers8 \
+                     libnvparsers8 \
+
+[Посмотреть установленные пакеты]
   dpkg -l | grep -P "libcudnn|libnvinfer|libnvonnxparsers|libnvparsers" | sort
 
-Удалить установленные пакеты:
+[Удалить установленные пакеты]
   sudo apt-get purge libcudnn* libnvinfer* libnvonnxparsers* libnvparsers*
