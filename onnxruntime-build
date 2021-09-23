@@ -1,0 +1,9 @@
+Склонировать репозиторий:
+    https://github.com/Microsoft/onnxruntime
+
+Сборка библиотеки:
+    ./build.sh --config RelWithDebInfo --build_shared_lib --parallel --cmake_extra_defines CMAKE_INSTALL_PREFIX=/opt/onnxruntime/$VERSION
+
+Установка библиотеки:
+    cd build/Linux/RelWithDebInfo
+    sudo make install
