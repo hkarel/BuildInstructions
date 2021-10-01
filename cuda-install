@@ -26,14 +26,14 @@ EOF
   sudo apt-get update
 
 Установить nvidia-driver:
-  Для cuda-11-3 версию 470 (или выше)
+  Для cuda-11-4 версию 470 (или выше)
   https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 
 Установить:
-  sudo apt-get install cuda-11-3
+  sudo apt-get install cuda-11-4
 
 Запрет на обновление:
-  sudo apt-mark hold cuda-11-3
+  sudo apt-mark hold cuda-11-4
 
 Посмотреть установленные пакеты:
   dpkg -l | grep cuda
