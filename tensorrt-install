@@ -29,16 +29,14 @@
     libnvparsers8=8.2.0-1+cuda11.4 \
 
 [Запрет на обновление (для разработчика)]
-  sudo apt-mark hold cuda-11-4 \
-                     libcudnn8 libcudnn8-dev \
+  sudo apt-mark hold libcudnn8 libcudnn8-dev \
                      libnvinfer8 libnvinfer-dev \
                      libnvinfer-plugin8 libnvinfer-plugin-dev \
                      libnvonnxparsers8 libnvonnxparsers-dev \
                      libnvparsers8 libnvparsers-dev \
 
 [Запрет на обновление (для рабочей станции)]
-  sudo apt-mark hold cuda-11-4 \
-                     libcudnn8 \
+  sudo apt-mark hold libcudnn8 \
                      libnvinfer8 \
                      libnvinfer-plugin8 \
                      libnvonnxparsers8 \

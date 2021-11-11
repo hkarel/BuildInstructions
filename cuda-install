@@ -32,8 +32,9 @@ EOF
 Установить:
   sudo apt-get install cuda-11-4
 
-Запрет на обновление:
-  sudo apt-mark hold cuda-11-4
+# [11.10.21] Отменяем запрет на обновление CUDA в рамках мажорной версии
+# Запрет на обновление:
+#   sudo apt-mark hold cuda-11-4
 
 Посмотреть установленные пакеты:
   dpkg -l | grep cuda
