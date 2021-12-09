@@ -40,4 +40,4 @@ make -j$(nproc) && sudo make install
 
 sudo find ${FFMPEG_PATH}/lib -maxdepth 1 -type f -exec chrpath -r '$ORIGIN' {} \;
 
-git checkout -f && git clean -dfx
+git checkout -f && git clean -dfx > /dev/null
