@@ -4,7 +4,7 @@ git checkout -t origin/release/4.4
 
 [required]
 sudo apt-get install yasm /* флаг по возможности не использовать --allow-unauthenticated */
-sudo apt-get install libv4l-dev
+sudo apt-get install libv4l-dev libaom-dev
 
 [recommended]
 sudo apt-get install libx264-dev libx265-dev
@@ -29,6 +29,7 @@ sed -r 's/.*enabled rpath \&\& echo.*/rpath=-Wl,-z,origin -Wl,-rpath,\\\$ORIGIN/
   --enable-shared \
   --enable-rpath \
   --enable-pic \
+  --enable-libaom \
   --extra-ldexeflags=-pie \
 
 Для сборки со сторонним компилятором добавить
@@ -40,4 +41,4 @@ make -j$(nproc) && sudo make install
 
 sudo find ${FFMPEG_PATH}/lib -maxdepth 1 -type f -exec chrpath -r '$ORIGIN' {} \;
 
-git checkout -f && git clean -dfx
+git checkout -f && git clean -dfx > /dev/null
