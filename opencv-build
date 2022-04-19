@@ -3,7 +3,7 @@ http://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html
 
 [Источник]
 git clone https://github.com/opencv/opencv.git
-git checkout -t origin/3.4
+git checkout -t origin/4.x
 
 [compiler]
 sudo apt-get install build-essential
@@ -31,7 +31,7 @@ echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" \
 cd ~/opencv
 git clean -dfx && mkdir -p build && cd build
 
-OPENCV_VERSION=4.5.4; \
+OPENCV_VERSION=4.5.5; \
 export OPENCV_PATH=/opt/opencv/${OPENCV_VERSION}; \
 echo "OPENCV_VERSION: $OPENCV_VERSION"; \
 echo "OPENCV_PATH: $OPENCV_PATH" \
