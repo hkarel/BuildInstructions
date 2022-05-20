@@ -30,11 +30,11 @@ EOF
   https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 
 Установить:
-  sudo apt-get install cuda-11-4
+  sudo apt-get install cuda-11-6
 
 # [11.10.21] Отменяем запрет на обновление CUDA в рамках мажорной версии
 # Запрет на обновление:
-#   sudo apt-mark hold cuda-11-4
+#   sudo apt-mark hold cuda-11-6
 
 Посмотреть установленные пакеты:
   dpkg -l | grep cuda
