@@ -23,6 +23,9 @@ deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ 
 # deb-src https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /
 EOF
 
+  # Регистрация ключа репозитория
+  sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+
   sudo apt-get update
 
 Установить nvidia-driver:
