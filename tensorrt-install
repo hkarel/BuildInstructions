@@ -9,24 +9,24 @@
 
 [Установка для разработчика]
   sudo apt-get install \
-    libcudnn8=8.4.1.50-1+cuda11.6 \
-    libcudnn8-dev=8.4.1.50-1+cuda11.6 \
-    libnvinfer8=8.4.3-1+cuda11.6 \
-    libnvinfer-dev=8.4.3-1+cuda11.6 \
-    libnvinfer-plugin8=8.4.3-1+cuda11.6 \
-    libnvinfer-plugin-dev=8.4.3-1+cuda11.6 \
-    libnvonnxparsers8=8.4.3-1+cuda11.6 \
-    libnvonnxparsers-dev=8.4.3-1+cuda11.6 \
-    libnvparsers8=8.4.3-1+cuda11.6 \
-    libnvparsers-dev=8.4.3-1+cuda11.6 \
+    libcudnn8=8.6.0.163-1+cuda11.8 \
+    libcudnn8-dev=8.6.0.163-1+cuda11.8 \
+    libnvinfer8=8.5.1-1+cuda11.8 \
+    libnvinfer-dev=8.5.1-1+cuda11.8 \
+    libnvinfer-plugin8=8.5.1-1+cuda11.8 \
+    libnvinfer-plugin-dev=8.5.1-1+cuda11.8 \
+    libnvonnxparsers8=8.5.1-1+cuda11.8 \
+    libnvonnxparsers-dev=8.5.1-1+cuda11.8 \
+    libnvparsers8=8.5.1-1+cuda11.8 \
+    libnvparsers-dev=8.5.1-1+cuda11.8 \
 
 [Установка для рабочей станции (без dev-библиотек)]
   sudo apt-get install \
-    libcudnn8=8.4.1.50-1+cuda11.6 \
-    libnvinfer8=8.4.3-1+cuda11.6 \
-    libnvinfer-plugin8=8.4.3-1+cuda11.6 \
-    libnvonnxparsers8=8.4.3-1+cuda11.6 \
-    libnvparsers8=8.4.3-1+cuda11.6 \
+    libcudnn8=8.6.0.163-1+cuda11.8 \
+    libnvinfer8=8.5.1-1+cuda11.8 \
+    libnvinfer-plugin8=8.5.1-1+cuda11.8 \
+    libnvonnxparsers8=8.5.1-1+cuda11.8 \
+    libnvparsers8=8.5.1-1+cuda11.8 \
 
 [Запрет на обновление (для разработчика)]
   sudo apt-mark hold libcudnn8 libcudnn8-dev \
