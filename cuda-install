@@ -29,11 +29,15 @@ EOF
   sudo apt-get update
 
 Установить nvidia-driver:
-  Для cuda-11-4 нужна версия 495 (или выше)
+  Для cuda-11-6 нужна версия 515 (или выше)
   https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 
 Установить:
-  sudo apt-get install cuda-11-8
+  sudo apt-get install \
+    cuda-drivers-515 \
+    cuda-libraries-11-6 \
+    cuda-libraries-dev-11-6 \
+    cuda-nvcc-11-6
 
 # [11.10.21] Отменяем запрет на обновление CUDA в рамках мажорной версии
 # Запрет на обновление:
