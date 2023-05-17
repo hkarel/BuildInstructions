@@ -29,12 +29,15 @@ EOF
   sudo apt-get update
 
 Установить nvidia-driver:
-  Для cuda-11-6 нужна версия 515 (или выше)
+  Для cuda-11-6 нужна версия 525 (или выше)
   https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+
+Для серверной установки перевести систему в multi-user режим (запрет запуска Xorg):
+    sudo systemctl set-default multi-user.target
 
 Установить:
   sudo apt-get install \
-    cuda-drivers-515 \
+    cuda-drivers-$(dpkg -l | grep 'nvidia-driver' | sed -r 's/\s{2,}/ /g' | cut -d' ' -f2 | cut -d'-' -f3) \
     cuda-libraries-11-6 \
     cuda-libraries-dev-11-6 \
     cuda-nvcc-11-6
