@@ -4,7 +4,7 @@ git checkout -t origin/release/4.4
 
 [required]
 sudo apt-get install yasm /* флаг по возможности не использовать --allow-unauthenticated */
-sudo apt-get install libv4l-dev
+sudo apt-get install chrpath libv4l-dev
 
 [recommended]
 sudo apt-get install libx264-dev libx265-dev
