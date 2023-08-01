@@ -26,6 +26,9 @@ EOF
   # Регистрация ключа репозитория
   sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
 
+  # Альтернативный вариант регистрации ключа репозитория (при подключении через proxy)
+  wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | sudo apt-key add -
+
   sudo apt-get update
 
 Установить nvidia-driver:
@@ -33,7 +36,7 @@ EOF
   https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 
 Для серверной установки перевести систему в multi-user режим (запрет запуска Xorg):
-    sudo systemctl set-default multi-user.target
+  sudo systemctl set-default multi-user.target
 
 Установить:
   sudo apt-get install \
