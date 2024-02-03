@@ -64,18 +64,18 @@ cmake \
   -D BUILD_JAVA=OFF \
   .. \
 
-Для сборки со сторонним компилятором добавить
+[Для сборки со сторонним компилятором добавить]
   -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
   -D CMAKE_CXX_COMPILER=/opt/gcc/8.4.0/bin/g++ \
 
-Для сборки под ARM NEON добавить
+[Для сборки под ARM NEON добавить]
   -D ENABLE_VFPV3=ON \
   -D ENABLE_NEON=ON \
 
   Параметры компилятора
     -mfpu=neon -mfp16-format=ieee
 
-Процессор Intel i5 2500K SandyBridge не поддерживает OpenCL
+[Процессор Intel i5 2500K SandyBridge не поддерживает OpenCL]
   -D WITH_VA_INTEL=ON \
   -D VA_INTEL_MSDK_ROOT=/opt/intel/mediasdk/7.0.16073669 \
 

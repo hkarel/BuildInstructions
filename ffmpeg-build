@@ -32,7 +32,7 @@ sed -r 's/.*enabled rpath \&\& echo.*/rpath=-Wl,-z,origin -Wl,-rpath,\\\$ORIGIN/
   --enable-openssl \
   --extra-ldexeflags=-pie \
 
-Для сборки со сторонним компилятором добавить
+[Для сборки со сторонним компилятором добавить]
   --cc=/opt/gcc/8.4.0/bin/gcc \
   --cxx=/opt/gcc/8.4.0/bin/g++ \
 
