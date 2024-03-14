@@ -9,7 +9,7 @@ git checkout -t origin/4.x
 sudo apt-get install build-essential
 
 [required]
-sudo apt-get install cmake git libgtk2.0-dev pkg-config
+sudo apt-get install cmake git pkg-config
 
 [optional]
 sudo apt-get install libjpeg-dev libpng-dev libtiff-dev
