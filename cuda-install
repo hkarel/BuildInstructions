@@ -38,16 +38,24 @@ EOF
 Для серверной установки перевести систему в multi-user режим (запрет запуска Xorg):
   sudo systemctl set-default multi-user.target
 
+export CUDA_VERSION=11-6; \
+echo  "CUDA_VERSION: $CUDA_VERSION"; \
+
+export CUDA_VERSION=12-4; \
+echo  "CUDA_VERSION: $CUDA_VERSION"; \
+
 Установка для рабочей станции (без dev-библиотек)
   sudo apt-get install \
     cuda-drivers-$(dpkg -l | grep 'nvidia-driver' | sed -r 's/\s{2,}/ /g' | cut -d' ' -f2 | cut -d'-' -f3) \
-    cuda-libraries-11-6 \
-    cuda-nvcc-11-6  # Нужно ли это на рабочей станции? Проверить
+    cuda-libraries-$CUDA_VERSION \
+    cuda-nvcc-$CUDA_VERSION \
+
+    # Нужен ли пакет cuda-nvcc-... на рабочей станции? Проверить
 
 Дополнительно установить для разработчика
   sudo apt-get install \
-    cuda-libraries-dev-11-6 \
-    cuda-nvcc-11-6
+    cuda-libraries-dev-$CUDA_VERSION \
+    cuda-nvcc-$CUDA_VERSION
 
 Посмотреть установленные пакеты:
   dpkg -l | grep cuda
