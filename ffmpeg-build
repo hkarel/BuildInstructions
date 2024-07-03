@@ -17,9 +17,9 @@ export FFMPEG_PATH=/opt/ffmpeg/${FFMPEG_VERSION}; \
 echo "FFMPEG_VERSION: $FFMPEG_VERSION"; \
 echo "FFMPEG_PATH: $FFMPEG_PATH" \
 
-sed -r 's/enabled rpath \&\& add_ldexeflags.*/enabled rpath \&\& add_ldsoflags -Wl,-z,origin \&\& add_ldsoflags -Wl,-rpath,AORIGIN/' \
+sed -r "s|enabled rpath \&\& add_ldexeflags.*|enabled rpath \&\& add_ldsoflags -Wl,-z,origin \&\& add_ldsoflags -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} \&\& add_ldsoflags -Wl,-rpath,AORIGIN|" \
     -i configure; \
-sed -r 's/.*enabled rpath \&\& echo.*/rpath=-Wl,-z,origin -Wl,-rpath,\\\$ORIGIN/' \
+sed -r "s|.*enabled rpath \&\& echo.*|rpath=-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\\\$ORIGIN|" \
     -i configure \
 
 ./configure \
@@ -39,6 +39,10 @@ sed -r 's/.*enabled rpath \&\& echo.*/rpath=-Wl,-z,origin -Wl,-rpath,\\\$ORIGIN/
 
 make -j$(nproc) && sudo make install
 
-sudo find ${FFMPEG_PATH}/lib -maxdepth 1 -type f -exec chrpath -r '$ORIGIN' {} \;
+sudo find ${FFMPEG_PATH}/lib -maxdepth 1 -type f -exec chrpath -r "/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION}:\$ORIGIN" {} \;
+
+sudo find ${FFMPEG_PATH}/lib -maxdepth 1 -type f -exec chmod 644 {} \;
+
+for f in $(ls -1 ${FFMPEG_PATH}/lib/*.so*); do echo $f; readelf -a $f | grep '$ORIGIN'; done
 
 git checkout -f && git clean -dfx > /dev/null
