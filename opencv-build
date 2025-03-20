@@ -31,7 +31,7 @@ echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" \
 cd ~/opencv
 git clean -dfx && mkdir -p build && cd build
 
-OPENCV_VERSION=4.11; \
+OPENCV_VERSION=4.12; \
 export OPENCV_PATH=/opt/opencv/${OPENCV_VERSION}; \
 echo "OPENCV_VERSION: $OPENCV_VERSION"; \
 echo "OPENCV_PATH: $OPENCV_PATH" \
