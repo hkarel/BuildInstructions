@@ -13,7 +13,7 @@ sudo apt-get install cmake gperf
 cd ~/telegram-bot-api
 git clean -dfx && mkdir -p build && cd build
 
-TELEGRAM_BOT_API_VERS=8.3; \
+TELEGRAM_BOT_API_VERS=9.0; \
 export TELEGRAM_SERV_PATH=/opt/telegram-botserver/${TELEGRAM_BOT_API_VERS}; \
 echo "TELEGRAM_BOT_API_VERS: $TELEGRAM_BOT_API_VERS"; \
 echo "TELEGRAM_SERV_PATH: $TELEGRAM_SERV_PATH" \
