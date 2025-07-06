@@ -1,18 +1,27 @@
 [Источник]
 git clone https://github.com/FFmpeg/FFmpeg.git
-git checkout -t origin/release/4.4
+git checkout -t origin/release/7.1
 
 [required]
 sudo apt-get install yasm /* флаг по возможности не использовать --allow-unauthenticated */
-sudo apt-get install chrpath libv4l-dev libssl-dev
+sudo apt-get install chrpath libv4l-dev libssl-dev libnuma-dev
 
 [recommended]
 sudo apt-get install libx264-dev libx265-dev
 
-cd ~/FFmpeg
+[Дополнительный репозиторий для сборки с Nvidia CUDA (выполнить единоразово)]
+git clone ssh://git@gitlab.tochka.ai:16822/nvidia/nv-codec-headers.git
+Оригинальный репозиторий: https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+Для версии CUDA 12.x перейти на коммит 9934f17
+Выполнить: sudo make install (см. инструкцию ниже)
+
+[Инструкция по сборке с Nvidia CUDA]
+https://docs.nvidia.com/video-technologies/video-codec-sdk/12.0/ffmpeg-with-nvidia-gpu/index.html
+
+cd ~/ffmpeg
 git checkout -f && git clean -dfx
 
-FFMPEG_VERSION=4.4; \
+FFMPEG_VERSION=7.1; \
 export FFMPEG_PATH=/opt/ffmpeg/${FFMPEG_VERSION}; \
 echo "FFMPEG_VERSION: $FFMPEG_VERSION"; \
 echo "FFMPEG_PATH: $FFMPEG_PATH" \
@@ -26,13 +35,26 @@ sed -r "s|.*enabled rpath \&\& echo.*|rpath=-Wl,-z,origin -Wl,-rpath,/opt/tochka
 
 ./configure \
   --prefix=$FFMPEG_PATH \
-  --disable-static \
+  --enable-nonfree \
   --disable-doc \
+  --disable-static \
   --enable-shared \
   --enable-rpath \
   --enable-pic \
   --enable-openssl \
   --extra-ldexeflags=-pie \
+  --enable-libnpp \
+  --enable-cuda-nvcc \
+  --nvcc=/usr/local/cuda/bin/nvcc \
+  --nvccflags="-gencode arch=compute_75,code=sm_75 -O2" \
+  --extra-cflags=-I/usr/local/cuda/include \
+  --extra-ldflags=-L/usr/local/cuda/lib64 \
+
+
+[Для сборки с программными кодеками h264, h265]
+  --enable-gpl \
+  --enable-libx264 \
+  --enable-libx265 \
 
 [Для сборки со сторонним компилятором добавить]
   --cc=/opt/gcc/8.4.0/bin/gcc \
