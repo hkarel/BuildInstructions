@@ -5,6 +5,11 @@ http://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html
 git clone https://github.com/opencv/opencv.git
 git checkout -t origin/4.x
 
+[Дополнительный репозиторий для сборки с Nvidia CUDA]
+Путь до модулей этого репозитория нужно указать в параметре OPENCV_EXTRA_MODULES_PATH
+git clone https://github.com/opencv/opencv_contrib
+git checkout -t origin/4.x
+
 [compiler]
 sudo apt-get install build-essential
 
@@ -21,17 +26,33 @@ sudo apt-get install libv4l-dev
 sudo apt-get install \
   libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
 
+[Дополнительный репозиторий для сборки с Nvidia CUDA (выполнить единоразово)]
+git clone ssh://git@gitlab.tochka.ai:16822/nvidia/video-codec-sdk.git
+Оригинальный репозиторий: git@gitlab.com:nvidia/video/video-codec-sdk.git
+Скопировать все заголовочные файлы из директории ./video-codec-sdk/Video_Codec_SDK_12.2.72/Interface
+в директорию /usr/local/cuda/include/
+
+cd ~/opencv
+git clean -dfx && mkdir -p build && cd build
+
+export OPENCV_CONTRIB_PATH=../../opencv_contrib; \
+export OPENCV_CONTRIB_BUILD_MODS='cudaarithm|cudacodec|cudaimgproc|cudafilters|cudawarping|cudev'; \
+export OPENCV_CONTRIB_DELETE_MODS=$(find $OPENCV_CONTRIB_PATH/modules -mindepth 1 -maxdepth 1 -type d | grep -v -E $OPENCV_CONTRIB_BUILD_MODS); \
+echo "OPENCV_CONTRIB_PATH: $OPENCV_CONTRIB_PATH"; \
+echo "OPENCV_CONTRIB_BUILD_MODS: $OPENCV_CONTRIB_BUILD_MODS"; \
+echo "OPENCV_CONTRIB_DELETE_MODS: $OPENCV_CONTRIB_DELETE_MODS" \
+
+[Исключение модулей opencv_contrib из сборки]
+for f in $OPENCV_CONTRIB_DELETE_MODS; do rm -rf $f; done
+
 [Для сборки с собранной библиотекой FFMPEG]
-FFMPEG_VERSION=4.4; \
+FFMPEG_VERSION=7.1; \
 export PKG_CONFIG_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib/pkgconfig; \
 export LD_LIBRARY_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}; \
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"; \
 echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" \
 
-cd ~/opencv
-git clean -dfx && mkdir -p build && cd build
-
-OPENCV_VERSION=4.12; \
+OPENCV_VERSION=4.13; \
 export OPENCV_PATH=/opt/opencv/${OPENCV_VERSION}; \
 echo "OPENCV_VERSION: $OPENCV_VERSION"; \
 echo "OPENCV_PATH: $OPENCV_PATH" \
@@ -39,6 +60,8 @@ echo "OPENCV_PATH: $OPENCV_PATH" \
 cmake \
   -D CMAKE_INSTALL_PREFIX=$OPENCV_PATH \
   -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_CXX_FLAGS="-std=c++17" \
+  -D CUDA_NVCC_FLAGS="-std=c++17" \
   -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\$ORIGIN" \
   -D CMAKE_INSTALL_LIBDIR=lib \
   -D BUILD_EXAMPLES=OFF \
@@ -51,7 +74,7 @@ cmake \
   -D BUILD_TIFF=ON \
   -D WITH_FFMPEG=ON \
   -D WITH_V4L=ON \
-  -D WITH_CUDA=OFF \
+  -D WITH_CUDA=ON \
   -D WITH_GTK=OFF \
   -D WITH_GTK_2_X=OFF \
   -D BUILD_opencv_python2=OFF \
@@ -62,7 +85,9 @@ cmake \
   -D BUILD_ANDROID_SERVICE=OFF \
   -D BUILD_FAT_JAVA_LIB=OFF \
   -D BUILD_JAVA=OFF \
+  -D OPENCV_EXTRA_MODULES_PATH=$OPENCV_CONTRIB_PATH/modules ../ \
   .. \
+
 
 [Для сборки со сторонним компилятором добавить]
   -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
@@ -85,5 +110,7 @@ make -j$(nproc) && sudo make install
 sudo ln -s -T $OPENCV_PATH/include/opencv4/opencv2 $OPENCV_PATH/include/opencv2
 
 for f in $(ls -1 ${OPENCV_PATH}/lib/*.so*); do echo $f; readelf -a $f | grep '$ORIGIN'; done
+
+[ -e $OPENCV_CONTRIB_PATH ] && cd $OPENCV_CONTRIB_PATH && git co -f > /dev/null && cd -
 
 [ -e ../build ] && cd .. && git clean -dfx
