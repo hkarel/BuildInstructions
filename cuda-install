@@ -44,6 +44,9 @@ echo  "CUDA_VERSION: $CUDA_VERSION"; \
 export CUDA_VERSION=12-4; \
 echo  "CUDA_VERSION: $CUDA_VERSION"; \
 
+export CUDA_VERSION=12-9; \
+echo  "CUDA_VERSION: $CUDA_VERSION"; \
+
 Установка для рабочей станции (без dev-библиотек)
   sudo apt-get install \
     cuda-drivers-$(dpkg -l | grep 'nvidia-driver' | sed -r 's/\s{2,}/ /g' | cut -d' ' -f2 | cut -d'-' -f3) \
