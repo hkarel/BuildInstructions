@@ -61,7 +61,7 @@ cmake \
   -D CMAKE_INSTALL_PREFIX=$OPENCV_PATH \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_CXX_FLAGS="-std=c++17" \
-  -D CUDA_NVCC_FLAGS="-std=c++17" \
+  -D CUDA_NVCC_FLAGS="-std=c++17 -Wno-deprecated-gpu-targets" \
   -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\$ORIGIN" \
   -D CMAKE_INSTALL_LIBDIR=lib \
   -D BUILD_EXAMPLES=OFF \
