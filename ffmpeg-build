@@ -21,7 +21,12 @@ https://docs.nvidia.com/video-technologies/video-codec-sdk/12.0/ffmpeg-with-nvid
 cd ~/ffmpeg
 git checkout -f && git clean -dfx
 
+[Выполнить для сборки с GPU]
+export CUDA_VERSION=12.4; \
+echo  "CUDA_VERSION: $CUDA_VERSION" \
+
 FFMPEG_VERSION=7.1; \
+FFMPEG_VERSION=${FFMPEG_VERSION}${CUDA_VERSION:+-cuda$CUDA_VERSION}
 export FFMPEG_PATH=/opt/ffmpeg/${FFMPEG_VERSION}; \
 echo "FFMPEG_VERSION: $FFMPEG_VERSION"; \
 echo "FFMPEG_PATH: $FFMPEG_PATH" \
@@ -33,6 +38,19 @@ sed -r "/enabled rpath \&\& add_ldexeflags.*/a enabled rpath \&\& add_ldsoflags 
 sed -r "s|.*enabled rpath \&\& echo.*|rpath=-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\\\$ORIGIN|" \
     -i configure \
 
+[Сборка с CPU]
+./configure \
+  --prefix=$FFMPEG_PATH \
+  --disable-doc \
+  --disable-static \
+  --enable-shared \
+  --enable-rpath \
+  --enable-pic \
+  --enable-openssl \
+  --extra-ldexeflags=-pie \
+
+
+[Сборка с GPU]
 ./configure \
   --prefix=$FFMPEG_PATH \
   --enable-nonfree \
@@ -45,10 +63,10 @@ sed -r "s|.*enabled rpath \&\& echo.*|rpath=-Wl,-z,origin -Wl,-rpath,/opt/tochka
   --extra-ldexeflags=-pie \
   --enable-libnpp \
   --enable-cuda-nvcc \
-  --nvcc=/usr/local/cuda/bin/nvcc \
+  --nvcc=/usr/local/cuda-${CUDA_VERSION}/bin/nvcc \
   --nvccflags="-gencode arch=compute_75,code=sm_75 -O2" \
-  --extra-cflags=-I/usr/local/cuda/include \
-  --extra-ldflags=-L/usr/local/cuda/lib64 \
+  --extra-cflags=-I/usr/local/cuda-${CUDA_VERSION}/include \
+  --extra-ldflags=-L/usr/local/cuda-${CUDA_VERSION}/lib64 \
 
 
 [Для сборки с программными кодеками h264, h265]
