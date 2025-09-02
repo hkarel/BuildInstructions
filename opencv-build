@@ -35,6 +35,11 @@ git clone ssh://git@gitlab.tochka.ai:16822/nvidia/video-codec-sdk.git
 cd ~/opencv
 git clean -dfx && mkdir -p build && cd build
 
+[Выполнить для сборки с GPU]
+export CUDA_VERSION=12.4; \
+echo  "CUDA_VERSION: $CUDA_VERSION"; \
+
+[Выполнить для сборки с GPU]
 export OPENCV_CONTRIB_PATH=../../opencv_contrib; \
 export OPENCV_CONTRIB_BUILD_MODS='cudaarithm|cudacodec|cudaimgproc|cudafilters|cudawarping|cudev'; \
 export OPENCV_CONTRIB_DELETE_MODS=$(find $OPENCV_CONTRIB_PATH/modules -mindepth 1 -maxdepth 1 -type d | grep -v -E $OPENCV_CONTRIB_BUILD_MODS); \
@@ -42,26 +47,27 @@ echo "OPENCV_CONTRIB_PATH: $OPENCV_CONTRIB_PATH"; \
 echo "OPENCV_CONTRIB_BUILD_MODS: $OPENCV_CONTRIB_BUILD_MODS"; \
 echo "OPENCV_CONTRIB_DELETE_MODS: $OPENCV_CONTRIB_DELETE_MODS" \
 
-[Исключение модулей opencv_contrib из сборки]
+[Выполнить для сборки с GPU: Исключение модулей opencv_contrib из сборки]
 for f in $OPENCV_CONTRIB_DELETE_MODS; do rm -rf $f; done
 
 [Для сборки с собранной библиотекой FFMPEG]
 FFMPEG_VERSION=7.1; \
-export PKG_CONFIG_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib/pkgconfig; \
-export LD_LIBRARY_PATH=/opt/ffmpeg/$FFMPEG_VERSION/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}; \
+FFMPEG_VERSION=${FFMPEG_VERSION}${CUDA_VERSION:+-cuda$CUDA_VERSION}
+export PKG_CONFIG_PATH=/opt/ffmpeg/${FFMPEG_VERSION}/lib/pkgconfig; \
+export LD_LIBRARY_PATH=/opt/ffmpeg/${FFMPEG_VERSION}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}; \
 echo "PKG_CONFIG_PATH: $PKG_CONFIG_PATH"; \
 echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" \
 
 OPENCV_VERSION=4.13; \
+OPENCV_VERSION=${OPENCV_VERSION}${CUDA_VERSION:+-cuda$CUDA_VERSION}
 export OPENCV_PATH=/opt/opencv/${OPENCV_VERSION}; \
 echo "OPENCV_VERSION: $OPENCV_VERSION"; \
 echo "OPENCV_PATH: $OPENCV_PATH" \
 
+[Сборка с CPU]
 cmake \
   -D CMAKE_INSTALL_PREFIX=$OPENCV_PATH \
   -D CMAKE_BUILD_TYPE=Release \
-  -D CMAKE_CXX_FLAGS="-std=c++17" \
-  -D CUDA_NVCC_FLAGS="-std=c++17 -Wno-deprecated-gpu-targets" \
   -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\$ORIGIN" \
   -D CMAKE_INSTALL_LIBDIR=lib \
   -D BUILD_EXAMPLES=OFF \
@@ -70,6 +76,41 @@ cmake \
   -D BUILD_opencv_highgui=OFF \
   -D WITH_IPP=OFF \
   -D WITH_1394=OFF \
+  -D WITH_PNG=ON \
+  -D WITH_JPEG=ON \
+  -D BUILD_TIFF=ON \
+  -D WITH_FFMPEG=ON \
+  -D WITH_V4L=ON \
+  -D WITH_CUDA=OFF \
+  -D WITH_GTK=OFF \
+  -D WITH_GTK_2_X=OFF \
+  -D BUILD_opencv_python2=OFF \
+  -D BUILD_opencv_python3=OFF \
+  -D BUILD_opencv_js=OFF \
+  -D BUILD_ANDROID_PROJECTS=OFF \
+  -D BUILD_ANDROID_EXAMPLES=OFF \
+  -D BUILD_ANDROID_SERVICE=OFF \
+  -D BUILD_FAT_JAVA_LIB=OFF \
+  -D BUILD_JAVA=OFF \
+  .. \
+
+
+[Сборка с GPU]
+cmake \
+  -D CMAKE_INSTALL_PREFIX=$OPENCV_PATH \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_CXX_FLAGS="-std=c++17" \
+  -D CUDA_NVCC_FLAGS="-std=c++17 -Wno-deprecated-gpu-targets" \
+  -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-${CUDA_VERSION} \
+  -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-z,origin -Wl,-rpath,/opt/tochkacv/lib/ffmpeg/${FFMPEG_VERSION} -Wl,-rpath,\$ORIGIN" \
+  -D CMAKE_INSTALL_LIBDIR=lib \
+  -D BUILD_EXAMPLES=OFF \
+  -D BUILD_TESTS=OFF \
+  -D BUILD_PERF_TESTS=OFF \
+  -D BUILD_opencv_highgui=OFF \
+  -D WITH_IPP=OFF \
+  -D WITH_1394=OFF \
+  -D WITH_PNG=ON \
   -D WITH_JPEG=ON \
   -D BUILD_TIFF=ON \
   -D WITH_FFMPEG=ON \
@@ -93,17 +134,6 @@ cmake \
   -D CMAKE_C_COMPILER=/opt/gcc/8.4.0/bin/gcc \
   -D CMAKE_CXX_COMPILER=/opt/gcc/8.4.0/bin/g++ \
 
-[Для сборки под ARM NEON добавить]
-  -D ENABLE_VFPV3=ON \
-  -D ENABLE_NEON=ON \
-
-  Параметры компилятора
-    -mfpu=neon -mfp16-format=ieee
-
-[Процессор Intel i5 2500K SandyBridge не поддерживает OpenCL]
-  -D WITH_VA_INTEL=ON \
-  -D VA_INTEL_MSDK_ROOT=/opt/intel/mediasdk/7.0.16073669 \
-
 
 make -j$(nproc) && sudo make install
 
@@ -111,6 +141,7 @@ sudo ln -s -T $OPENCV_PATH/include/opencv4/opencv2 $OPENCV_PATH/include/opencv2
 
 for f in $(ls -1 ${OPENCV_PATH}/lib/*.so*); do echo $f; readelf -a $f | grep '$ORIGIN'; done
 
+[Выполнить для сборки с GPU]
 [ -e $OPENCV_CONTRIB_PATH ] && cd $OPENCV_CONTRIB_PATH && git co -f > /dev/null && cd -
 
 [ -e ../build ] && cd .. && git clean -dfx
