@@ -25,6 +25,9 @@ git checkout -f && git clean -dfx
 export CUDA_VERSION=12.4; \
 echo  "CUDA_VERSION: $CUDA_VERSION" \
 
+export CUDA_VERSION=12.9; \
+echo  "CUDA_VERSION: $CUDA_VERSION" \
+
 FFMPEG_VERSION=7.1; \
 FFMPEG_VERSION=${FFMPEG_VERSION}${CUDA_VERSION:+-cuda$CUDA_VERSION}
 export FFMPEG_PATH=/opt/ffmpeg/${FFMPEG_VERSION}; \

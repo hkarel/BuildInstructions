@@ -39,6 +39,9 @@ git clean -dfx && mkdir -p build && cd build
 export CUDA_VERSION=12.4; \
 echo  "CUDA_VERSION: $CUDA_VERSION"; \
 
+export CUDA_VERSION=12.9; \
+echo  "CUDA_VERSION: $CUDA_VERSION"; \
+
 [Выполнить для сборки с GPU]
 export OPENCV_CONTRIB_PATH=../../opencv_contrib; \
 export OPENCV_CONTRIB_BUILD_MODS='cudaarithm|cudacodec|cudaimgproc|cudafilters|cudawarping|cudev'; \
