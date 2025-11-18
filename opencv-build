@@ -42,6 +42,9 @@ echo  "CUDA_VERSION: $CUDA_VERSION"; \
 export CUDA_VERSION=12.9; \
 echo  "CUDA_VERSION: $CUDA_VERSION"; \
 
+[Примечание для сборки с GPU]
+Не забывать обновлять репозиторий opencv_contrib до актуального состояния!
+
 [Выполнить для сборки с GPU]
 export OPENCV_CONTRIB_PATH=../../opencv_contrib; \
 export OPENCV_CONTRIB_BUILD_MODS='cudaarithm|cudacodec|cudaimgproc|cudafilters|cudawarping|cudev'; \
