@@ -5,6 +5,9 @@
   20.04 "deb (network)"
 
 Далее по инструкции:
+
+--- Для Ubuntu 20.04 ---
+
   wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
   sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
 
@@ -28,6 +31,22 @@ EOF
 
   # Альтернативный вариант регистрации ключа репозитория (при подключении через proxy)
   wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | sudo apt-key add -
+
+--- Для Ubuntu 24.04 ---
+
+  wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+  sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+
+  # Регистрации ключа репозитория (при подключении через proxy)
+  wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | sudo gpg --dearmor -o /etc/apt/keyrings/cudarepo.gpg
+
+  # Добавляет репозиторий в отдельный файл nvidia-cuda.list (в консоль вставить 4 строки, включая EOF)
+  cat << EOF | sudo tee /etc/apt/sources.list.d/nvidia-cuda.list
+deb [signed-by=/etc/apt/keyrings/cudarepo.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/ /
+# deb-src https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/ /
+EOF
+
+---
 
   sudo apt-get update
 
