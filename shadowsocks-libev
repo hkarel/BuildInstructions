@@ -1,0 +1,62 @@
+[Материал по теме]
+https://github.com/shadowsocks/shadowsocks-libev
+
+[Источник]
+git clone --recursive https://github.com/shadowsocks/shadowsocks-libev.git
+
+[compiler]
+sudo apt-get install build-essential
+
+[tools]
+sudo apt-get install autoconf libtool cmake pkg-config
+
+# Если не нужна документация, то можно не устанавливать. Требуют много места
+# на сервер-системе.
+# sudo apt-get install asciidoc xmlto
+
+[required]
+sudo apt-get install \
+  libssl-dev libpcre2-dev libev-dev libc-ares-dev libmbedtls-dev libsodium-dev
+
+### Маппинг либ (для информации) ###
+libssl-dev
+libssl3t64
+
+libpcre2-dev
+libpcre2-16-0
+libpcre2-32-0
+libpcre2-8-0
+libpcre2-posix3
+
+libev-dev
+libev4t64
+
+libc-ares-dev
+libcares2
+
+libmbedtls-dev
+libmbedcrypto7t64
+libmbedtls14t64
+libmbedx509-1t64
+
+libsodium-dev
+libsodium23
+###
+
+cd ./shadowsocks-libev
+git clean -dfx && mkdir -p build && cd build
+
+SHADOWSOCKS_LIBEV_VERS=3.3.6; \
+export SHADOWSOCKS_LIBEV_PATH=/opt/shadowsocks/${SHADOWSOCKS_LIBEV_VERS}; \
+echo "SHADOWSOCKS_LIBEV_VERS: $SHADOWSOCKS_LIBEV_VERS"; \
+echo "SHADOWSOCKS_LIBEV_PATH: $SHADOWSOCKS_LIBEV_PATH" \
+
+cmake \
+  -D CMAKE_INSTALL_PREFIX=$SHADOWSOCKS_LIBEV_PATH \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D WITH_STATIC=OFF \
+  -D WITH_DOC_MAN=OFF \
+  -D WITH_DOC_HTML=OFF \
+  .. \
+
+make -j$(nproc) && sudo make install
