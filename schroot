@@ -1,0 +1,59 @@
+1. Установка необходимых пакетов:
+sudo apt update
+sudo apt install schroot debootstrap
+
+2. Создание директории для chroot:
+sudo mkdir -p /var/chroot/ubuntu20
+
+3. Настройка schroot:
+sudo nano /etc/schroot/chroot.d/ubuntu20.conf
+
+### Старый вариант ###
+# [ubuntu20]
+# description=Ubuntu 20.04 Focal Fossa
+# directory=/var/chroot/ubuntu20
+# type=directory
+# personality=linux
+# profile=default
+# users=user # Где user - это имя пользователя
+
+[ubuntu20]
+description=Ubuntu 20.04 (Focal) with GLIBC 2.31
+directory=/var/chroot/ubuntu20
+users=user
+root-users=root
+type=directory
+
+4. Создание chroot-окружения:
+sudo debootstrap --arch=amd64 focal /var/chroot/ubuntu20 http://archive.ubuntu.com/ubuntu/
+
+5. Настройка окружения после установки. Вход в chroot:ubuntu20:
+sudo schroot -c ubuntu20 -u root
+
+Далее внутри chroot:
+apt update
+apt install locales sudo
+dpkg-reconfigure locales  # Выберите нужные локали (например, en_US.UTF-8)
+exit
+
+6. Настройка пользователя. Вход в chroot:ubuntu20:
+sudo schroot -c ubuntu20 -u root
+
+Далее внутри chroot:
+adduser пользователь
+usermod -aG sudo пользователь
+exit
+
+7. Настройка доступа к системе
+Для корректной работы графических приложений и сервисов добавить в файл /etc/schroot/default/fstab следующие строки:
+
+text
+/proc          /proc          none  rw,bind         0       0
+/sys           /sys           none  rw,bind         0       0
+/dev           /dev           none  rw,bind         0       0
+/dev/pts       /dev/pts       none  rw,bind         0       0
+/home          /home          none  rw,bind         0       0
+/tmp           /tmp           none  rw,bind         0       0
+
+8. Использование chroot:ubuntu20:
+schroot -c chroot:ubuntu20
